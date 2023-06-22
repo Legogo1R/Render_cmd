@@ -1,0 +1,21 @@
+{
+    "rendersettings":{
+        "use_rendersettings_overwrite" : true,
+        "render_scheme" : "OPTIX",
+        "samples" : 256,
+        "use_resolustion_overwrite" : false,
+        "resolution_x" : 3520,
+        "resolution_y" : 2640,
+        "resolution_percentage" : 100,
+        "use_render_output_overwrite" : false,
+        "render_output" : "//Renders//Ls\\",
+        "file_format" : "PNG",
+        "color_mode" : "RGB",
+        "overwrite" : true,
+        "film_transparent" : false
+    },
+    "scene_name_generator_for_cmd":{
+        "animation_or_frames" : "f",
+        "frame_range" : "2"
+    }
+}

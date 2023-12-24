@@ -1,21 +1,67 @@
 {
-    "rendersettings":{
-        "use_rendersettings_overwrite" : true,
-        "render_scheme" : "OPTIX",
-        "samples" : 256,
-        "use_resolustion_overwrite" : false,
-        "resolution_x" : 3520,
-        "resolution_y" : 2640,
-        "resolution_percentage" : 100,
-        "use_render_output_overwrite" : false,
-        "render_output" : "//Renders//Ls\\",
-        "file_format" : "PNG",
-        "color_mode" : "RGB",
-        "overwrite" : true,
-        "film_transparent" : false
-    },
-    "scene_name_generator_for_cmd":{
-        "animation_or_frames" : "f",
-        "frame_range" : "2"
+    "render_settings" : {
+        "render_scheme" : {
+            "overwrite" : true,
+            "value" : "OPTIX"
+        },
+        "render_samples" : {
+            "overwrite" : true,
+            "value" : 256
+        },
+        "render_noice_threshold" : {
+            "overwrite" : true,
+            "value" : 0.01
+        },
+        "render_resolution_percentage" : {
+            "overwrite" : true,
+            "value" : 50
+        },
+        "light_paths" : {
+            "overwrite" : true,
+            "channels" : {
+                "total" : 32,
+                "diffuse" : 32,
+                "glossy" : 32,
+                "transmission" : 32,
+                "volume" : 32,
+                "transparent" : 32
+            }
+        },
+        "render_output_location" : {
+            "overwrite" : true,
+            "value" : "//Renders//Ls\\"
+        },
+        "file_format" : {
+            "overwrite" : true,
+            "value" : "PNG"
+        },
+        "color_mode" : {
+            "overwrite" : true,
+            "value" : "RGB"
+        },
+        "film_transparent" : {
+            "overwrite" : true,
+            "value" : false
+        },
+        "overwrite_files" : {
+            "overwrite" : true,
+            "value" : true
+        }
+        },
+    "render_frames" : {
+        "static_frame" : {
+            "toggle" : true,
+            "frames" : 1
+        },
+        "animation" : {
+            "toggle" : true,
+            "frame_range" : {
+                "toggle" : false,
+                "start_frame" : 1,
+                "end_frame" : 10
+            }
+        }
+        
     }
+
 }

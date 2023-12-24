@@ -4,6 +4,10 @@
             "overwrite" : true,
             "value" : "OPTIX"
         },
+        "render_device" : {
+            "overwrite" : true,
+            "value" : "GPU"
+        },
         "render_samples" : {
             "overwrite" : true,
             "value" : 256

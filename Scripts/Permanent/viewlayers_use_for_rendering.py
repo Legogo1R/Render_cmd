@@ -12,8 +12,6 @@ for node in C.scene.node_tree.nodes:
 # Set of view_layer_names used in the compositor
 view_layer_names = set()
 
-print('START')
-
 for scene in D.scenes:
     
     # Turn off "Render single layer"
@@ -40,8 +38,3 @@ for scene in D.scenes:
         else:
             vl.use = False
 
-# if __name__ == "__main__":
-#     print('\n..View Layers that has "Use for rendering" chekbox..')
-#     for scene in D.scenes:
-#         #Prints Layers per scene that will be rendered
-#         print(f'{scene.name}\n{view_layer_names}\n###################')

@@ -16,6 +16,10 @@
             "overwrite" : true,
             "value" : 0.01
         },
+        "render_denoice" : {
+            "overwrite" : true,
+            "value" : true
+        },
         "render_resolution_percentage" : {
             "overwrite" : true,
             "value" : 50
@@ -31,27 +35,24 @@
                 "transparent" : 32
             }
         },
+        "color_managment" : {
+            "overwrite" : true,
+            "view_transform" : "Filmic",
+            "look" : "High Contrast",
+            "colorspace" : "sRGB"
+        },
         "render_output_location" : {
             "overwrite" : true,
-            "value" : "//Renders//Ls\\"
+            "value" : "//Huy"
         },
         "file_format" : {
             "overwrite" : true,
-            "value" : "PNG"
-        },
-        "color_mode" : {
-            "overwrite" : true,
-            "value" : "RGB"
-        },
-        "film_transparent" : {
-            "overwrite" : true,
-            "value" : false
-        },
-        "overwrite_files" : {
-            "overwrite" : true,
-            "value" : true
+            "format" : "PNG",
+            "color_mode" : "RGBA",
+            "film_transparent" : false,
+            "overwrite_files" : true
         }
-        },
+    },
     "render_frames" : {
         "static_frame" : {
             "toggle" : true,
@@ -65,7 +66,5 @@
                 "end_frame" : 10
             }
         }
-        
     }
-
 }

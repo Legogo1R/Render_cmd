@@ -1,5 +1,6 @@
 import os, sys, subprocess, argparse, psutil
 import re
+from main_functions import createParser, is_blender_running
 
 scripts_path = 'f:\\Library\\Blender_Work\\3Devision\\Scripts\\Render_cmd\\Scripts\\'
 scene_name_generator = f'-P {scripts_path}scene_name_generator_for_cmd.py'
@@ -7,31 +8,29 @@ rendersettings = f'-P {scripts_path}rendersettings.py'
 viewlayers_use_for_rendering = f'-P {scripts_path}viewlayers_use_for_rendering_from_every_scene.py'
 active_layers_printer = f'-P {scripts_path}active_layers_printer.py'
 
-#Create example of a class to parse arguments from comand line
-def createParser():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-b', '--blend', nargs = '+', required = True, help = 'type a name(names) and extension of a .blend file(files) you want to render in any order')
-    parser.add_argument('-s', '--script', nargs = '+', default = '',  help = '(Optional) type a name(names) and extension of .py script(scripts) you want to launch, in order they should be executed')
-    parser.add_argument('-L', action='store_true', help = '(Optional) if you want to render certain scenes. Then you will be asked to select cirtain scenes from a given list')
-    return parser
+
 
 if __name__ == '__main__':
-    #Checks if blender is already running
-    if 'blender.exe'  in (p.name() for p in psutil.process_iter()):
+
+    if is_blender_running:
         answer = input('Another instance of Blender is already running! Are you sure you want to start render now?\n(Type y/n)\n')
-        if answer == 'y':
+        if answer.lower() == 'y':
             pass
         else:
             print('Render aborted!')
             exit()
+
     parser = createParser()
     args = parser.parse_args(sys.argv[1:])
     scene_names_string = ''
+
+    # Permanent scripts that should be run before and after optional scripts
     scripts_before = f'{rendersettings} {viewlayers_use_for_rendering}'
     scripts_after = f'{active_layers_printer}'
     script = [f'-P {scripts_path}{script_name}' for script_name in args.script]
     script = " ".join(script)
     blender = 'blender.exe'
+
     print('\n..Getting scene names from .blend files..')
     #Getting scene names cycle
     scene_names_dict = {}

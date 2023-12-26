@@ -1,7 +1,7 @@
 import bpy
 import sys, json, os
 
-from config import TEMP_PATH
+MAIN_PATH = 'f:\\Library\\Blender_Work\\3Devision\\Scripts\\Render_cmd'
 
 def get_scene_names():
     """
@@ -18,8 +18,8 @@ def get_scene_names():
 if __name__ == "__main__":
 
     scenes = get_scene_names()
-    path = os.path.abspath(TEMP_PATH)
+    file_name = os.path.sep.join([MAIN_PATH,'.temp', 'scenes.json'])
 
-    with open(f'path\\scenes.json', 'w+', encoding='utf-8') as txt:
+    with open(file_name, 'w+', encoding='utf-8') as txt:
         json.dump(scenes, txt, ensure_ascii=False, indent=4)
 

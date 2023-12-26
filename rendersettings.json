@@ -54,17 +54,9 @@
         }
     },
     "render_frames" : {
-        "static_frame" : {
-            "toggle" : true,
-            "frames" : 1
-        },
-        "animation" : {
-            "toggle" : true,
-            "frame_range" : {
-                "toggle" : false,
-                "start_frame" : 1,
-                "end_frame" : 10
-            }
-        }
+        "render" : "f",
+        "frames" : "1"
     }
+    
+
 }

@@ -1,7 +1,7 @@
 import bpy
 import json
 
-with open('f:\\Library\\Blender_Work\\3Devision\\Scripts\\Render_cmd\\rendersettings_config.json', 'r') as fp:
+with open('f:\\Library\\Blender_Work\\3Devision\\Scripts\\Render_cmd\\rendersettings.json', 'r') as fp:
     config = json.load(fp)
 
 render_settings = {

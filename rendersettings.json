@@ -55,7 +55,7 @@
     },
     "render_frames" : {
         "render" : "f",
-        "frames" : "1"
+        "frames" : "1..5,7..10"
     }
     
 

@@ -1,25 +1,25 @@
 import bpy
 import sys, json, os
-from pathlib import Path
 
-from ...config import TEMP_PATH
+from config import TEMP_PATH
 
 def get_scene_names():
+    """
+    Runs inside blender file to dump json file with names
+    of all scenes in that blender file
+    """
+
     scenes = {}
     for scene in bpy.data.scenes:
         scenes[scene.name] = {}
-        
     return scenes
 
 
 if __name__ == "__main__":
 
-    # get_scene_names()
-    main_dir = str(Path(__file__).parents[2])
+    scenes = get_scene_names()
+    path = os.path.abspath(TEMP_PATH)
 
-    # path = os.path.sep.join([os.path.abspath(TEMP_PATH), 'get_scenes.py'])
-    # with open()
-    
+    with open(f'path\\scenes.json', 'w+', encoding='utf-8') as txt:
+        json.dump(scenes, txt, ensure_ascii=False, indent=4)
 
-
-    print(main_dir)

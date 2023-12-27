@@ -8,7 +8,7 @@ from main_functions import (
     scripts2string,
     get_scene_names,
     create_arg_scenes,
-    render
+    start_render
 )
 
 
@@ -48,4 +48,4 @@ if __name__ == '__main__':
 
     
     # Rendering cycle
-    render(arg_blend_file, arg_scripts, arg_scenes)
+    start_render(arg_blend_file, arg_scripts, arg_scenes)

@@ -2,6 +2,17 @@
     "main_title_1": {
         "en": "Blender render farm",
         "ru": ""
+    },
+    "main_logo_1": {
+        "en": "3Devision",
+        "ru": ""
+    },
+    "file_render_select_file_1": {
+        "en": "Enter path",
+        "ru": ""
+    },
+    "optional_script_names_1": {
+        "en": "Enter scripts' names",
+        "ru": ""
     }
-
 }

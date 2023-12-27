@@ -39,7 +39,7 @@ if __name__ == '__main__':
 
     draw_main_container(localiz_dict, cur_language)
 
-    # draw_render_button(localiz_dict, cur_language)
+    draw_render_button(localiz_dict, cur_language)
 
     st.write(st.session_state)
 

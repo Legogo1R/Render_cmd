@@ -28,27 +28,30 @@ def is_blender_running():
     
     return 'blender.exe'  in (p.name() for p in psutil.process_iter())
 
-def scripts2string(scrits_before, scripts_after,scripts_optional):
+def scripts2string(scrits_before, scripts_after, scripts_optional):
     """
     Converts scripts' pathes to single string needed as a command line argument
     """
 
     # Permanent scripts that should be run before and after optional scripts
-    tmp_lst = []
-    for script_name in scrits_before:
-        tmp_lst.append(os.path.sep.join([MAIN_PATH, PERM_SCRIPTS_PATH, script_name]))
-    arg_scripts_before = " ".join(tmp_lst)  # Needs to be as 1 string
+    if scrits_before:
+        tmp_lst = []
+        for script_name in scrits_before:
+            tmp_lst.append(os.path.sep.join([MAIN_PATH, PERM_SCRIPTS_PATH, script_name]))
+        arg_scripts_before = " ".join(tmp_lst)  # Needs to be as 1 string
     
-    tmp_lst = []
-    for script_name in scripts_after:
-        tmp_lst.append(os.path.sep.join([MAIN_PATH, PERM_SCRIPTS_PATH, script_name]))
-    arg_scripts_after = " ".join(tmp_lst)  # Needs to be as 1 string
+    if scripts_after:
+        tmp_lst = []
+        for script_name in scripts_after:
+            tmp_lst.append(os.path.sep.join([MAIN_PATH, PERM_SCRIPTS_PATH, script_name]))
+        arg_scripts_after = " ".join(tmp_lst)  # Needs to be as 1 string
 
     # Optional scripts that can be passed as arguments, will be run in between
-    tmp_lst = []
-    for script_name in scripts_optional:
-        tmp_lst.append(os.path.sep.join([MAIN_PATH, SCRIPT_PATH, script_name]))
-    arg_optional_scripts = " ".join(tmp_lst)  # Needs to be as 1 string
+    if scripts_optional:
+        tmp_lst = []
+        for script_name in scripts_optional:
+            tmp_lst.append(os.path.sep.join([MAIN_PATH, SCRIPT_PATH, script_name]))
+        arg_optional_scripts = " ".join(tmp_lst)  # Needs to be as 1 string
 
     return f'-P {arg_scripts_before} {arg_optional_scripts} {arg_scripts_after}'
 
@@ -84,7 +87,7 @@ def create_arg_scenes(scenes, render_frames):
     return arg_scenes
 
 
-def render(arg_blend_file, arg_scripts, arg_scenes):
+def start_render(arg_blend_file, arg_scripts, arg_scenes):
     """ 
     Runs blender through command line to render with desired settings
     """

@@ -7,6 +7,7 @@ from main_functions import(
     get_scene_names,
     create_arg_scenes,
     scripts2string,
+    convert2console_render_comand,
 
 )
 
@@ -65,8 +66,15 @@ def draw_main_container(localization, language):
             if st.session_state['new_files_counter'] - count <= 1:
                 add_file_container_bt = st.container(border=False)
                 with add_file_container_bt:
-                    add_file_button = st.button(label=':heavy_plus_sign:',
-                                                on_click=add_file_container_bt_ac)  # on_click required to rerun when ses_state is changed
+                    col1, col2, buff = st.columns([1,1,10])
+                    
+                    add_file_button = col1.button(label=':heavy_plus_sign:',
+                                                on_click=add_file_container_bt_ac,  # on_click required to change session_state variable
+                                                args=(count,))  # pass arguments to function here
+            
+                    remove_file_button = col2.button(label=':heavy_minus_sign:',
+                                                on_click=remove_file_container_bt_ac,
+                                                args=(count,))  
             
             # Containers with file data
             else:
@@ -83,10 +91,6 @@ def draw_file_data(localization, language, file_num):
     Draws file path input, correct/wrong path input,
 
     """
-    if file_num+1 not in st.session_state['files_data']:
-        st.session_state['files_data'][file_num+1] = {}
-        st.session_state['files_data'][file_num+1]['selected_scenes'] = []
-        st.session_state['files_data'][file_num+1]['scripts'] = []
 
     col1, col2, col3 = st.columns([1,1,30])
     with col1:
@@ -101,14 +105,23 @@ def draw_file_data(localization, language, file_num):
         st.session_state['files_data'][file_num+1]['path'] = file_path_input
 
         try:
+            st.session_state['files_data'][file_num+1]['selected_scenes'] = []  # Clear after change in file_path input
+            st.session_state['files_data'][file_num+1]['scenes'] = []  # Same
+
             scenes = get_scene_names(file_path_input)
             col2.write(':large_green_circle:')
 
             col1, buf, col2 = st.columns([5,1,15])
             with col1:
                 draw_scene_selector(localization, language, file_num, scenes)
-                selected_scenes = st.session_state['files_data'][file_num+1]['selected_scenes']
+                if st.session_state['files_data'][file_num+1]['all_scenes']:
+                    selected_scenes = scenes
+                else:
+                    selected_scenes = st.session_state['files_data'][file_num+1]['selected_scenes']
+
                 arg_scenes = create_arg_scenes(selected_scenes,render_frames)
+                st.session_state['files_data'][file_num+1]['scenes'] = arg_scenes
+
             with col2:
                 draw_render_settings(localization, language, file_num)
    
@@ -154,10 +167,11 @@ def draw_render_settings(localization, language, file_num):
             label='Optional scripts to launch',
             placeholder=localization['optional_script_names_1'][language],
         )
+    
     optional_scripts = optional_scripts_input.split(', ')
-    st.write(optional_scripts)
-    arg_scripts = scripts2string(SCRIPTS_BEFORE,SCRIPTS_AFTER,optional_scripts)
-    st.write(arg_scripts)
+    str_scripts = scripts2string(SCRIPTS_BEFORE,SCRIPTS_AFTER,optional_scripts)
+    st.session_state['files_data'][file_num+1]['scripts'] = str_scripts
+    
 
 
 
@@ -170,17 +184,35 @@ def draw_render_button(localization, language):
                                 #  on_click=start_render(arg_blend_file, arg_scripts, arg_scenes)
                                  )
     if start_render_bt:
-        st.rerun()
+        pass
     #     st.write(f'{arg_blend_file} {arg_scripts} {arg_scenes}')
 
 
-def add_file_container_bt_ac():
+def add_file_container_bt_ac(file_num):
     """
     Helper function, works with on_click,
     which is required to rerun when session_state is changed
     """
     
     st.session_state['new_files_counter'] += 1
+    if file_num+1 not in st.session_state['files_data']:
+        st.session_state['files_data'][file_num+1] = {}
+        st.session_state['files_data'][file_num+1]['selected_scenes'] = []
+        st.session_state['files_data'][file_num+1]['scenes'] = []
+        st.session_state['files_data'][file_num+1]['scripts'] = ''
+
+
+def remove_file_container_bt_ac(file_num):
+    """
+    Helper function, works with on_click,
+    which is required to rerun when session_state is changed
+    """
+    
+    if st.session_state['new_files_counter'] >= 2:
+        st.session_state['new_files_counter'] -= 1
+    
+    if file_num in st.session_state['files_data']:
+        del st.session_state['files_data'][file_num]
 
 
 def reset_session_state():

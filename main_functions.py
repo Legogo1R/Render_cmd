@@ -34,26 +34,40 @@ def scripts2string(scrits_before, scripts_after, scripts_optional):
     """
 
     # Permanent scripts that should be run before and after optional scripts
-    if scrits_before:
-        tmp_lst = []
-        for script_name in scrits_before:
+    tmp_lst = []
+    for script_name in scrits_before:
+        if script_name != '':  # Checks for empty strings, but still elements of a list
             tmp_lst.append(os.path.sep.join([MAIN_PATH, PERM_SCRIPTS_PATH, script_name]))
-        arg_scripts_before = " ".join(tmp_lst)  # Needs to be as 1 string
+    str_scripts_before = " ".join(filter(None, tmp_lst))  # Needs to be as 1 string
     
-    if scripts_after:
-        tmp_lst = []
-        for script_name in scripts_after:
+    tmp_lst = []
+    for script_name in scripts_after:
+        if script_name != '': 
             tmp_lst.append(os.path.sep.join([MAIN_PATH, PERM_SCRIPTS_PATH, script_name]))
-        arg_scripts_after = " ".join(tmp_lst)  # Needs to be as 1 string
+    str_scripts_after = " ".join(filter(None, tmp_lst))  # Needs to be as 1 string
 
     # Optional scripts that can be passed as arguments, will be run in between
-    if scripts_optional:
-        tmp_lst = []
-        for script_name in scripts_optional:
+    tmp_lst = []
+    for script_name in scripts_optional:
+        if script_name != '':
             tmp_lst.append(os.path.sep.join([MAIN_PATH, SCRIPT_PATH, script_name]))
-        arg_optional_scripts = " ".join(tmp_lst)  # Needs to be as 1 string
+    str_optional_scripts = " ".join(filter(None, tmp_lst))  # Needs to be as 1 string
 
-    return f'-P {arg_scripts_before} {arg_optional_scripts} {arg_scripts_after}'
+    # Concatenate in a single string
+    arg_scripts = " ".join(filter(None, (str_scripts_before,str_optional_scripts,str_scripts_after)))
+    return arg_scripts
+
+def convert2console_render_comand(blender, blend_file, scripts_str, arg_scenes):
+    """
+    Compiles arguments in to a single console command that starts render
+    """
+    # .bllend file
+    arg_blend_file = f'-b {blend_file}'
+
+    # scripts
+    arg_scripts = f'-P {scripts_str}'
+
+    return f'{blender} {arg_blend_file} {arg_scripts} {arg_scenes}'
 
 # Unbeliveable shit below.. who could have guessed that you can do that..
 def get_scene_names(blend_file):
@@ -68,7 +82,6 @@ def get_scene_names(blend_file):
     bf = blendfile.open_blend(blend_file)
     scene_block = bf.find_blocks_from_code(b'SC')
     scenes = [get_id_name(sc) for sc in scene_block]
-    print(scenes)
     bf.close()
 
     return scenes

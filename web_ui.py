@@ -107,32 +107,32 @@ def draw_file_data(localization, language, file_num):
         )
         st.session_state['files_data'][file_num+1]['path'] = file_path_input
 
-        try:
-            st.session_state['files_data'][file_num+1]['selected_scenes'] = []  # Clear after change in file_path input
-            st.session_state['files_data'][file_num+1]['scenes'] = []  # Same
-            st.session_state['files_data'][file_num+1]['correct_input'] = True
+    try:
+        st.session_state['files_data'][file_num+1]['selected_scenes'] = []  # Clear after change in file_path input
+        st.session_state['files_data'][file_num+1]['scenes'] = []  # Same
+        st.session_state['files_data'][file_num+1]['correct_input'] = True
 
-            scenes = get_scene_names(file_path_input)
-            col2.write(':large_green_circle:')
+        scenes = get_scene_names(file_path_input)
+        col2.write(':large_green_circle:')
 
-            col1, buf, col2 = st.columns([5,1,15])
-            with col1:
-                draw_scene_selector(localization, language, file_num, scenes)
-                if st.session_state['files_data'][file_num+1]['all_scenes']:
-                    selected_scenes = scenes
-                else:
-                    selected_scenes = st.session_state['files_data'][file_num+1]['selected_scenes']
+        col1, buf, col2 = st.columns([5,1,15])
+        with col1:
+            draw_scene_selector(localization, language, file_num, scenes)
+            if st.session_state['files_data'][file_num+1]['all_scenes']:
+                selected_scenes = scenes
+            else:
+                selected_scenes = st.session_state['files_data'][file_num+1]['selected_scenes']
 
-                arg_scenes = scenes2arg_scenes(selected_scenes,render_frames)
-                st.session_state['files_data'][file_num+1]['scenes'] = arg_scenes
+            arg_scenes = scenes2arg_scenes(selected_scenes,render_frames)
+            st.session_state['files_data'][file_num+1]['scenes'] = arg_scenes
 
-            with col2:
-                draw_render_settings(localization, language, file_num)
-   
-        except FileNotFoundError:
-            st.write('Wrong path')
-            col2.write(':red_circle:')
-            st.session_state['files_data'][file_num+1]['correct_input'] = False
+        with col2:
+            draw_render_settings(localization, language, file_num)
+
+    except FileNotFoundError:
+        st.write('Wrong path')
+        col2.write(':red_circle:')
+        st.session_state['files_data'][file_num+1]['correct_input'] = False
 
 def draw_scene_selector(localization, language, file_num, scene_list):
     """
@@ -141,19 +141,16 @@ def draw_scene_selector(localization, language, file_num, scene_list):
     adds selected scenes to session_state variable
     """
 
-    grey_out = False
     all_scenes_toggle_chb = st.checkbox(label='All scenes',
                    value=True,
                    key=f'all_scenes_{file_num+1}'
                    )
     st.session_state['files_data'][file_num+1]['all_scenes'] = all_scenes_toggle_chb
 
-    if all_scenes_toggle_chb:
-        grey_out = not grey_out
     st.write('Select scenes')
 
     for scene in scene_list:
-        if st.checkbox(scene, value=False, disabled=grey_out):
+        if st.checkbox(scene, value=False, disabled=all_scenes_toggle_chb):
             if scene not in st.session_state['files_data'][file_num+1]['selected_scenes']:
                 st.session_state['files_data'][file_num+1]['selected_scenes'].append(scene)
         else:
@@ -163,11 +160,11 @@ def draw_scene_selector(localization, language, file_num, scene_list):
 
 def draw_render_settings(localization, language, file_num):
     """
-    Draws render settings
+    Draws render settings,
     Selection of optional scripts
     """
 
-    st.write('Render Settings')
+    
     optional_scripts_input = st.text_input(
             label='Optional scripts to launch',
             placeholder=localization['optional_script_names_1'][language],
@@ -177,6 +174,28 @@ def draw_render_settings(localization, language, file_num):
     optional_scripts = optional_scripts_input.split(', ')
     str_scripts = scripts2string(SCRIPTS_BEFORE,SCRIPTS_AFTER,optional_scripts)
     st.session_state['files_data'][file_num+1]['scripts'] = str_scripts
+
+    with st.container(border=True):
+        
+        
+        col1, col2 = st.columns([2,1])
+        
+        col1.subheader('Render Settings')
+        col2.toggle(label='Overwrite')
+
+        # 4 columns to display 2 parameters in 1 row
+        col_param1, col_toggle1, col_param2, col_toggle2 = st.columns([5,3,5,3])
+
+        # render_scheme
+        parameters = {'label':'Render scheme', 'options':['OPTIX', 'CUDA'], 'key':'render_scheme'}
+        render_settings_block(col_param1, col_toggle1, 'radio', parameters)
+
+        # render_device
+        parameters = {'label':'Render device', 'options':['GPU', 'CPU'], 'key':'render_device'}
+        render_settings_block(col_param2, col_toggle2, 'radio', parameters)
+
+
+
     
 
 
@@ -209,6 +228,18 @@ def draw_render_button(localization, language):
             start_render(console_command)
         
 
+def render_settings_block(col_param, col_toggle, widget, kwargs):
+    """
+    Draws single render setting with desired widget
+    """
+
+    with st.container(border=True):
+        with col_param:
+            getattr(st, widget)(**kwargs)  # To draw any widget you pass to function
+        with col_toggle:
+            key = kwargs['key']
+            unique_key = f'overwrite_{key}'
+            st.checkbox(label='overwrite', label_visibility='hidden', key=unique_key)
 
 def add_file_container_bt_ac(file_num):
     """
@@ -223,6 +254,9 @@ def add_file_container_bt_ac(file_num):
         st.session_state['files_data'][file_num+1]['selected_scenes'] = []
         st.session_state['files_data'][file_num+1]['scenes'] = []
         st.session_state['files_data'][file_num+1]['scripts'] = ''
+        st.session_state['files_data'][file_num+1]['render_settings'] = {}
+        
+
 
 
 def remove_file_container_bt_ac(file_num):

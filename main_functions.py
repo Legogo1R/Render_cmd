@@ -57,17 +57,6 @@ def scripts2string(scrits_before, scripts_after, scripts_optional):
     arg_scripts = " ".join(filter(None, (str_scripts_before,str_optional_scripts,str_scripts_after)))
     return arg_scripts
 
-def convert2console_render_comand(blender, blend_file, scripts_str, arg_scenes):
-    """
-    Compiles arguments in to a single console command that starts render
-    """
-    # .bllend file
-    arg_blend_file = f'-b {blend_file}'
-
-    # scripts
-    arg_scripts = f'-P {scripts_str}'
-
-    return f'{blender} {arg_blend_file} {arg_scripts} {arg_scenes}'
 
 # Unbeliveable shit below.. who could have guessed that you can do that..
 def get_scene_names(blend_file):
@@ -86,7 +75,7 @@ def get_scene_names(blend_file):
 
     return scenes
 
-def create_arg_scenes(scenes, render_frames):
+def scenes2arg_scenes(scenes, render_frames):
 
     tmp_scenes = []
     if render_frames['render'] == 'f':
@@ -100,13 +89,13 @@ def create_arg_scenes(scenes, render_frames):
     return arg_scenes
 
 
-def start_render(arg_blend_file, arg_scripts, arg_scenes):
+def start_render(console_command):
     """ 
     Runs blender through command line to render with desired settings
     """
 
     blender = BLENDER_PATH
     render = subprocess.run(
-            f'{blender} {arg_blend_file} {arg_scripts} {arg_scenes}',
+            console_command,
             shell = True
         )

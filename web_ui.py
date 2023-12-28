@@ -1,13 +1,15 @@
 import streamlit as st
+from time import sleep
+from stqdm import stqdm
+
 import os, json
 
 from config import *
 from main_functions import(
     start_render,
     get_scene_names,
-    create_arg_scenes,
+    scenes2arg_scenes,
     scripts2string,
-    convert2console_render_comand,
 
 )
 
@@ -25,6 +27,7 @@ render_frames = config['render_frames']
 # Session State Variables
 session_state_variables = {
     'new_files_counter' : 1,
+    'all_correct' : False,
     'files_data' : {},
 
 }
@@ -66,7 +69,7 @@ def draw_main_container(localization, language):
             if st.session_state['new_files_counter'] - count <= 1:
                 add_file_container_bt = st.container(border=False)
                 with add_file_container_bt:
-                    col1, col2, buff = st.columns([1,1,10])
+                    col1, col2, buff = st.columns([1,1,12])
                     
                     add_file_button = col1.button(label=':heavy_plus_sign:',
                                                 on_click=add_file_container_bt_ac,  # on_click required to change session_state variable
@@ -107,6 +110,7 @@ def draw_file_data(localization, language, file_num):
         try:
             st.session_state['files_data'][file_num+1]['selected_scenes'] = []  # Clear after change in file_path input
             st.session_state['files_data'][file_num+1]['scenes'] = []  # Same
+            st.session_state['files_data'][file_num+1]['correct_input'] = True
 
             scenes = get_scene_names(file_path_input)
             col2.write(':large_green_circle:')
@@ -119,7 +123,7 @@ def draw_file_data(localization, language, file_num):
                 else:
                     selected_scenes = st.session_state['files_data'][file_num+1]['selected_scenes']
 
-                arg_scenes = create_arg_scenes(selected_scenes,render_frames)
+                arg_scenes = scenes2arg_scenes(selected_scenes,render_frames)
                 st.session_state['files_data'][file_num+1]['scenes'] = arg_scenes
 
             with col2:
@@ -128,6 +132,7 @@ def draw_file_data(localization, language, file_num):
         except FileNotFoundError:
             st.write('Wrong path')
             col2.write(':red_circle:')
+            st.session_state['files_data'][file_num+1]['correct_input'] = False
 
 def draw_scene_selector(localization, language, file_num, scene_list):
     """
@@ -166,6 +171,7 @@ def draw_render_settings(localization, language, file_num):
     optional_scripts_input = st.text_input(
             label='Optional scripts to launch',
             placeholder=localization['optional_script_names_1'][language],
+            key=f'opt_scripts_{file_num+1}'
         )
     
     optional_scripts = optional_scripts_input.split(', ')
@@ -180,12 +186,28 @@ def draw_render_button(localization, language):
     Render button which starts rendering process
     """
 
-    start_render_bt = st.button('Start Render',
-                                #  on_click=start_render(arg_blend_file, arg_scripts, arg_scenes)
-                                 )
+    start_render_bt = st.button('Start Render')
     if start_render_bt:
-        pass
-    #     st.write(f'{arg_blend_file} {arg_scripts} {arg_scenes}')
+        # Checking if all inputs are correct
+        for file_data in st.session_state['files_data'].values():
+            if file_data['correct_input'] == False:
+                return st.write('Check file inputs. Something is wrong!')
+  
+
+        # if st.session_state['all_correct']:
+        for index, file_data in stqdm(st.session_state['files_data'].items()):
+            # Get data from Session_state dict
+            blender = BLENDER_PATH
+            blend_file = file_data['path']
+            arg_blend_file = f'-b {blend_file}'
+            scripts_str = file_data['scripts']
+            arg_scripts = f'-P {scripts_str}'
+            arg_scenes = file_data['scenes']
+
+            console_command = f'{blender} {arg_blend_file} {arg_scripts} {arg_scenes}'
+            st.write(console_command)
+            start_render(console_command)
+        
 
 
 def add_file_container_bt_ac(file_num):
@@ -197,6 +219,7 @@ def add_file_container_bt_ac(file_num):
     st.session_state['new_files_counter'] += 1
     if file_num+1 not in st.session_state['files_data']:
         st.session_state['files_data'][file_num+1] = {}
+        st.session_state['files_data'][file_num+1]['correct_input'] = False
         st.session_state['files_data'][file_num+1]['selected_scenes'] = []
         st.session_state['files_data'][file_num+1]['scenes'] = []
         st.session_state['files_data'][file_num+1]['scripts'] = ''

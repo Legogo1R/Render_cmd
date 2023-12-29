@@ -118,13 +118,6 @@ def draw_file_data(localization, language, file_num):
         col1, buf, col2 = st.columns([5,1,15])
         with col1:
             draw_scene_selector(localization, language, file_num, scenes)
-            if st.session_state['files_data'][file_num+1]['all_scenes']:
-                selected_scenes = scenes
-            else:
-                selected_scenes = st.session_state['files_data'][file_num+1]['selected_scenes']
-
-            arg_scenes = scenes2arg_scenes(selected_scenes,render_frames)
-            st.session_state['files_data'][file_num+1]['scenes'] = arg_scenes
 
         with col2:
             draw_render_settings(localization, language, file_num)
@@ -141,22 +134,28 @@ def draw_scene_selector(localization, language, file_num, scene_list):
     adds selected scenes to session_state variable
     """
 
+    # st.session_state['files_data'][file_num+1]['selected_scenes'] = []  # Clear after change in file_path input
+
     all_scenes_toggle_chb = st.checkbox(label='All scenes',
                    value=True,
                    key=f'all_scenes_{file_num+1}'
                    )
     st.session_state['files_data'][file_num+1]['all_scenes'] = all_scenes_toggle_chb
-
     st.write('Select scenes')
 
     for scene in scene_list:
-        if st.checkbox(scene, value=False, disabled=all_scenes_toggle_chb):
+        scene_cbx = st.checkbox(scene, value=False, disabled=all_scenes_toggle_chb)
+        if scene_cbx:
             if scene not in st.session_state['files_data'][file_num+1]['selected_scenes']:
                 st.session_state['files_data'][file_num+1]['selected_scenes'].append(scene)
         else:
             if scene in st.session_state['files_data'][file_num+1]['selected_scenes']:
                 st.session_state['files_data'][file_num+1]['selected_scenes'].remove(scene)
 
+    # Working with 'All scenes' switch
+    
+    if st.session_state['files_data'][file_num+1]['all_scenes']:
+        st.session_state['files_data'][file_num+1]['selected_scenes'] = scene_list
 
 def draw_render_settings(localization, language, file_num):
     """
@@ -331,17 +330,18 @@ def draw_render_settings(localization, language, file_num):
  
         col_param1, col_toggle1 = st.columns([9,1])
 
-        # render_frames
+        # render_scheme
         kwargs = {'label':'Render', 'options':['Frames', 'Animation'],
                       'horizontal':True,
                       'label_visibility':'collapsed',
                       'key':f'render_frames{file_num+1}'}
-        render_frames, toggle = render_settings_block(col_param1, col_toggle1, 'radio', kwargs,
+        render_scheme, toggle = render_settings_block(col_param1, col_toggle1, 'radio', kwargs,
                               checkbox=False)
-        if render_frames == 'Frames':
+        if render_scheme == 'Frames':
             disabled = False
-        elif render_frames == 'Animation':
+        elif render_scheme == 'Animation':
             disabled = True
+
         # frame_range
         kwargs = {'label':'Frame range',
                     'placeholder':'1,3..7,9,10',
@@ -349,15 +349,16 @@ def draw_render_settings(localization, language, file_num):
                     'key':f'frame_range_{file_num+1}'}
         frame_range, toggle = render_settings_block(col_param1, col_toggle1, 'text_input', kwargs,
                               checkbox=False)
-        parameters = {'render_frames':render_frames,
+        parameters = {'render_scheme':render_scheme,
                       'frame_range':frame_range,}
-        store_rendersettings(file_num, 'render_frames', **parameters)
+        store_rendersettings(file_num, 'render', **parameters)
 
 
 
 def render_settings_block(col_param, col_toggle, widget, kwargs,
                           checkbox_default=False, checkbox=True):
     """
+    Helperfunction for draw_render_settings()
     Draws single render setting with desired widget,
     Saves parameters to session_state files_data render_settings
     """
@@ -379,6 +380,7 @@ def render_settings_block(col_param, col_toggle, widget, kwargs,
     
 def store_rendersettings(file_num, state_param, **kwargs):
     """
+    Helperfunction for draw_render_settings()
     Stores session_state files_data rendersettings
     """
 
@@ -400,19 +402,28 @@ def draw_render_button(localization, language):
                 return st.write('Check file inputs. Something is wrong!')
   
 
-        # if st.session_state['all_correct']:
+
+
+
+
+        # Get data from Session_state dict
         for index, file_data in stqdm(st.session_state['files_data'].items()):
-            # Get data from Session_state dict
+
+            # blender.exe
             blender = BLENDER_PATH
+            #.blend file path
             blend_file = file_data['path']
             arg_blend_file = f'-b {blend_file}'
+            # Scripts pathes
             scripts_str = file_data['scripts']
             arg_scripts = f'-P {scripts_str}'
-            arg_scenes = file_data['scenes']
+            # Scenes
+            arg_scenes = scenes2arg_scenes(file_data['selected_scenes'],
+                                           file_data['render_settings']['render'])
 
             console_command = f'{blender} {arg_blend_file} {arg_scripts} {arg_scenes}'
             st.write(console_command)
-            start_render(console_command)
+            # start_render(console_command)
         
 
 
@@ -427,7 +438,6 @@ def add_file_container_bt_ac(file_num):
         st.session_state['files_data'][file_num+1] = {}
         st.session_state['files_data'][file_num+1]['correct_input'] = False
         st.session_state['files_data'][file_num+1]['selected_scenes'] = []
-        st.session_state['files_data'][file_num+1]['scenes'] = []
         st.session_state['files_data'][file_num+1]['scripts'] = ''
         st.session_state['files_data'][file_num+1]['render_settings'] = {}
         

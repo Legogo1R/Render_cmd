@@ -22,13 +22,6 @@ with open(path, encoding='utf-8') as localiz:
 
 cur_language = 'en'
 
-# Inforamtion about wich frames to render
-# Taken from rendersettings.json for eqch .blend file
-path = os.path.sep.join([MAIN_PATH, 'rendersettings.json'])
-with open(path, 'r') as fp:
-    config = json.load(fp)
-
-render_frames = config['render_frames']
 
 if __name__ == '__main__':
 

@@ -144,7 +144,8 @@ def draw_scene_selector(localization, language, file_num, scene_list):
     st.write('Select scenes')
 
     for scene in scene_list:
-        scene_cbx = st.checkbox(scene, value=False, disabled=all_scenes_toggle_chb)
+        scene_cbx = st.checkbox(scene, value=False,
+                                disabled=all_scenes_toggle_chb, key=f'cbx_{scene}_{file_num+1}')
         if scene_cbx:
             if scene not in st.session_state['files_data'][file_num+1]['selected_scenes']:
                 st.session_state['files_data'][file_num+1]['selected_scenes'].append(scene)
@@ -180,7 +181,8 @@ def draw_render_settings(localization, language, file_num):
         
         col1, col2 = st.columns([2,1])      
         col1.subheader('Render Settings')
-        col2.toggle(label='Overwrite', key=f'render_settings_overwrite_{file_num+1}')
+        overwrite_toggle = col2.toggle(label='Overwrite',  # Important toggle that switches on/off all settings' overwrite
+                                       key=f'render_settings_overwrite_{file_num+1}')
 
         col1, col2 = st.columns([9,2])
         # render_output_location
@@ -188,7 +190,7 @@ def draw_render_settings(localization, language, file_num):
                       'placeholder':'Enter output folder',
                       'key':f'render_output_location_{file_num+1}'}
         param, toggle = render_settings_block(col1, col2, 'text_input', kwargs,  # draw widget
-                              checkbox_default=True)
+                              checkbox_default=True, settings_toggle=overwrite_toggle)
         parameters = {'overwrite':toggle,  # parameters to store in session_state rendersettings 
                       'value':param}
         store_rendersettings(file_num, 'render_output_location', **parameters)  # store parameters
@@ -199,7 +201,8 @@ def draw_render_settings(localization, language, file_num):
         # render_scheme
         kwargs = {'label':'Render scheme', 'options':['OPTIX', 'CUDA'],
                       'key':f'render_scheme_{file_num+1}'}
-        param, toggle = render_settings_block(col_param1, col_toggle1, 'radio', kwargs)
+        param, toggle = render_settings_block(col_param1, col_toggle1, 'radio', kwargs,
+                                              settings_toggle=overwrite_toggle)
         parameters = {'overwrite':toggle,
                       'value':param}
         store_rendersettings(file_num, 'render_scheme', **parameters)
@@ -207,7 +210,8 @@ def draw_render_settings(localization, language, file_num):
         # render_device
         kwargs = {'label':'Render device', 'options':['GPU', 'CPU'],
                       'key':f'render_device_{file_num+1}'}
-        param, toggle = render_settings_block(col_param2, col_toggle2, 'radio', kwargs)
+        param, toggle = render_settings_block(col_param2, col_toggle2, 'radio', kwargs,
+                                              settings_toggle=overwrite_toggle)
         parameters = {'overwrite':toggle,
                       'value':param}
         store_rendersettings(file_num, 'render_device', **parameters)
@@ -216,7 +220,7 @@ def draw_render_settings(localization, language, file_num):
         kwargs = {'label':'Render samples', 'step':1,
                       'key':f'render_samples_{file_num+1}'}
         param, toggle = render_settings_block(col_param1, col_toggle1, 'number_input', kwargs,
-                              checkbox_default=True)
+                              checkbox_default=True, settings_toggle=overwrite_toggle)
         parameters = {'overwrite':toggle,
                       'value':param}
         store_rendersettings(file_num, 'render_samples', **parameters)
@@ -224,7 +228,8 @@ def draw_render_settings(localization, language, file_num):
         # render_noice_threshold
         kwargs = {'label':'Render noice threshold',
                       'key':f'render_noice_threshold_{file_num+1}'}
-        param, toggle = render_settings_block(col_param1, col_toggle1, 'number_input', kwargs)
+        param, toggle = render_settings_block(col_param1, col_toggle1, 'number_input', kwargs,
+                                              settings_toggle=overwrite_toggle)
         parameters = {'overwrite':toggle,
                       'value':param}
         store_rendersettings(file_num, 'render_noice_threshold', **parameters)
@@ -233,7 +238,7 @@ def draw_render_settings(localization, language, file_num):
         kwargs = {'label':'Render resolution', 'step':1,
                       'key':f'render_resolution_percentage_{file_num+1}'}
         param, toggle = render_settings_block(col_param2, col_toggle2, 'number_input', kwargs,
-                              checkbox_default=True)
+                              checkbox_default=True, settings_toggle=overwrite_toggle)
         parameters = {'overwrite':toggle,
                       'value':param}
         store_rendersettings(file_num, 'render_resolution_percentage', **parameters)
@@ -241,7 +246,8 @@ def draw_render_settings(localization, language, file_num):
         # render_denoice
         kwargs = {'label':'Denoice',
                       'key':f'render_denoice_{file_num+1}'}
-        param, toggle = render_settings_block(col_param2, col_toggle2, 'toggle', kwargs)
+        param, toggle = render_settings_block(col_param2, col_toggle2, 'toggle', kwargs,
+                                              settings_toggle=overwrite_toggle)
         parameters = {'overwrite':toggle,
                       'value':param}
         store_rendersettings(file_num, 'render_denoice', **parameters)
@@ -249,15 +255,15 @@ def draw_render_settings(localization, language, file_num):
         # color_managment
         col1, col2 = st.columns([2,1])      
         col1.write('Color managment')
-        toggle = col2.toggle(label='Overwrite', value=False, key=f'color_managment_{file_num+1}')
+        overwrite_toggle = col2.toggle(label='Overwrite', value=False, key=f'color_managment_{file_num+1}')
 
         col_param1, col_toggle1, col_param2, col_toggle2, = st.columns([10,1,10,1])
     
         # view_transform
         kwargs = {'label':'View Transform','options':['Filmic', 'AgX', 'Raw', 'Standart'],
                   'key':f'view_transform_{file_num+1}'}
-        view_transform, view_transform_toggle = render_settings_block(col_param1, col_toggle1, 'selectbox', kwargs,
-                                              checkbox=False)
+        view_transform, toggle = render_settings_block(col_param1, col_toggle1, 'selectbox', kwargs,
+                                              checkbox=False, settings_toggle=overwrite_toggle)
 
         # look
         # Stupid AgX has diffetent names for look. pff.. Now we need 'if' statement cause of that..
@@ -275,7 +281,7 @@ def draw_render_settings(localization, language, file_num):
                                                 'Low Contrast', 'Very Low Contrast'],
                       'key':f'look_{file_num+1}'}
         look, toggle = render_settings_block(col_param2, col_toggle2, 'selectbox', kwargs,
-                                                checkbox=False)
+                                                checkbox=False, settings_toggle=overwrite_toggle)
         
         parameters = {'overwrite':toggle,
                       'view_transform':view_transform,
@@ -289,7 +295,7 @@ def draw_render_settings(localization, language, file_num):
         # file_format
         col1, col2 = st.columns([2,1])      
         col1.write('File format')
-        toggle = col2.toggle(label='Overwrite', value=False, key=f'file_format_{file_num+1}')
+        overwrite_toggle = col2.toggle(label='Overwrite', value=False, key=f'file_format_{file_num+1}')
 
         col_param1, col_toggle1, col_param2, col_toggle2, = st.columns([10,1,10,1])
 
@@ -297,7 +303,7 @@ def draw_render_settings(localization, language, file_num):
         kwargs = {'label':'Format','options':['PNG', 'JPEG'],
                   'key':f'format_{file_num+1}'}
         format, format_toggle = render_settings_block(col_param1, col_toggle1, 'radio', kwargs,
-                                              checkbox=False)
+                                              checkbox=False, settings_toggle=overwrite_toggle)
         
         # color_mode
         if format == 'PNG':
@@ -307,19 +313,19 @@ def draw_render_settings(localization, language, file_num):
             kwargs = {'label':'Color mode','options':['BW', 'RGB'],
                       'key':f'color_mode_{file_num+1}'}
         color_mode, toggle = render_settings_block(col_param2, col_toggle2, 'selectbox', kwargs,
-                                                checkbox=False)
+                                                checkbox=False, settings_toggle=overwrite_toggle)
         
         # film_transparent
         kwargs = {'label':'Film transparent', 'value':False,
                       'key':f'film_transparent_{file_num+1}'}
         film_transparent, toggle = render_settings_block(col_param1, col_toggle1, 'toggle', kwargs,
-                                                checkbox=False)
+                                                checkbox=False, settings_toggle=overwrite_toggle)
         
         # overwrite_files
         kwargs = {'label':'Overwrite files', 'value':True,
                       'key':f'overwrite_files_{file_num+1}'}
         overwrite_files, toggle = render_settings_block(col_param2, col_toggle2, 'toggle', kwargs,
-                                                checkbox=False)
+                                                checkbox=False, settings_toggle=overwrite_toggle)
         
         parameters = {'overwrite':toggle,
                       'format':format,
@@ -337,18 +343,17 @@ def draw_render_settings(localization, language, file_num):
                       'key':f'render_frames{file_num+1}'}
         render_scheme, toggle = render_settings_block(col_param1, col_toggle1, 'radio', kwargs,
                               checkbox=False)
+        
         if render_scheme == 'Frames':
-            disabled = False
+            enabled = True
         elif render_scheme == 'Animation':
-            disabled = True
-
+            enabled = False
         # frame_range
         kwargs = {'label':'Frame range',
                     'placeholder':'1,3..7,9,10',
-                    'disabled':disabled,
                     'key':f'frame_range_{file_num+1}'}
         frame_range, toggle = render_settings_block(col_param1, col_toggle1, 'text_input', kwargs,
-                              checkbox=False)
+                              checkbox=False, settings_toggle=enabled)
         parameters = {'render_scheme':render_scheme,
                       'frame_range':frame_range,}
         store_rendersettings(file_num, 'render', **parameters)
@@ -356,7 +361,8 @@ def draw_render_settings(localization, language, file_num):
 
 
 def render_settings_block(col_param, col_toggle, widget, kwargs,
-                          checkbox_default=False, checkbox=True):
+                          checkbox_default=False, checkbox=True,
+                          settings_toggle=True):
     """
     Helperfunction for draw_render_settings()
     Draws single render setting with desired widget,
@@ -368,13 +374,16 @@ def render_settings_block(col_param, col_toggle, widget, kwargs,
             key = kwargs['key']
             unique_key = f'overwrite_{key}'
             toggle = st.checkbox(label='overwrite', value=checkbox_default,
+                                disabled=not settings_toggle,
                                 label_visibility='hidden', key=unique_key)
-        with col_param:
-            param = getattr(st, widget)(disabled=not toggle, **kwargs)  # To draw any widget you pass to function
+        if not settings_toggle:
+            toggle = settings_toggle
     else:
-        with col_param:
-            toggle = True
-            param = getattr(st, widget)(**kwargs)
+        toggle = True
+        if not settings_toggle:
+            toggle = settings_toggle
+    with col_param:
+        param = getattr(st, widget)(disabled=not toggle, **kwargs)  # To draw any widget you pass to function
 
     return param, toggle
     

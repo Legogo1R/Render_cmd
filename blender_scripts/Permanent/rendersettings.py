@@ -92,7 +92,7 @@ def change_output(scene, settings):
 
     #Output
     if settings['render_output_location']['overwrite']:
-        scene.render.filepath = settings['render_output_location']['value']
+        scene.render.filepath = f"{settings['render_output_location']['value']}\\"
         scene.render.use_file_extension = True
 
         # Output in output nodes

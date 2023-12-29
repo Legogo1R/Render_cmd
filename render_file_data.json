@@ -1,51 +1,46 @@
 {
-    "render_settings" : {
-        "render_scheme" : {
-            "overwrite" : true,
-            "value" : "OPTIX"
-        },
-        "render_device" : {
-            "overwrite" : true,
-            "value" : "GPU"
-        },
-        "render_samples" : {
-            "overwrite" : true,
-            "value" : 256
-        },
-        "render_noice_threshold" : {
-            "overwrite" : true,
-            "value" : 0.01
-        },
-        "render_denoice" : {
-            "overwrite" : true,
-            "value" : true
-        },
-        "render_resolution_percentage" : {
-            "overwrite" : true,
-            "value" : 50
-        },
-        "color_managment" : {
-            "overwrite" : true,
-            "view_transform" : "Filmic",
-            "look" : "High Contrast",
-            "colorspace" : "sRGB"
-        },
-        "render_output_location" : {
-            "overwrite" : true,
-            "value" : "//Renders"
-        },
-        "file_format" : {
-            "overwrite" : true,
-            "format" : "PNG",
-            "color_mode" : "RGBA",
-            "film_transparent" : false,
-            "overwrite_files" : true
-        }
+    "render_output_location": {
+        "overwrite": true,
+        "value": "//Renders"
     },
-    "render_frames" : {
-        "render_scheme" : "Frames",
-        "frame_range" : "1"
+    "render_scheme": {
+        "overwrite": false,
+        "value": "OPTIX"
+    },
+    "render_device": {
+        "overwrite": false,
+        "value": "GPU"
+    },
+    "render_samples": {
+        "overwrite": true,
+        "value": 5
+    },
+    "render_noice_threshold": {
+        "overwrite": false,
+        "value": 0.01
+    },
+    "render_resolution_percentage": {
+        "overwrite": true,
+        "value": 25
+    },
+    "render_denoice": {
+        "overwrite": false,
+        "value": true
+    },
+    "color_managment": {
+        "overwrite": false,
+        "view_transform": "AgX",
+        "look": "AgX - High Contrast"
+    },
+    "file_format": {
+        "overwrite": false,
+        "format": "PNG",
+        "color_mode": "RGB",
+        "film_transparent": false,
+        "overwrite_files": true
+    },
+    "render": {
+        "render_type": "Animation",
+        "frame_range": ""
     }
-    
-
 }

@@ -78,10 +78,10 @@ def get_scene_names(blend_file):
 def scenes2arg_scenes(scenes, render_frames):
 
     tmp_scenes = []
-    if render_frames['render'] == 'Frames':
+    if render_frames['render_scheme'] == 'Frames':
         for scene in scenes:
             tmp_scenes.append(f'-S {scene} -f {render_frames["frame_range"]}')
-    if render_frames['render'] == 'Animation':
+    if render_frames['render_scheme'] == 'Animation':
         for scene in scenes:
             tmp_scenes.append(f'-S {scene} -a')
     

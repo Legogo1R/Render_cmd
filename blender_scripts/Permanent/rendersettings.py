@@ -5,16 +5,16 @@ with open('f:\\Library\\Blender_Work\\3Devision\\Scripts\\Render_cmd\\render_fil
     config = json.load(fp)
 
 render_settings = {
-    'render_scheme' : config['render_settings']['render_scheme'],
-    'render_device' : config['render_settings']['render_device'],
-    'render_samples' : config['render_settings']['render_samples'],
-    'render_noice_threshold' : config['render_settings']['render_noice_threshold'],
-    'render_denoice' : config['render_settings']['render_denoice'],
-    'render_resolution_percentage' : config['render_settings']['render_resolution_percentage'],
-    # 'light_paths' : config['render_settings']['light_paths'],
-    'color_managment' : config['render_settings']['color_managment'],
-    'render_output_location' : config['render_settings']['render_output_location'],
-    'file_format' : config['render_settings']['file_format'],
+    'render_scheme' : config['render_scheme'],
+    'render_device' : config['render_device'],
+    'render_samples' : config['render_samples'],
+    'render_noice_threshold' : config['render_noice_threshold'],
+    'render_denoice' : config['render_denoice'],
+    'render_resolution_percentage' : config['render_resolution_percentage'],
+    # 'light_paths' : config['light_paths'],
+    'color_managment' : config['color_managment'],
+    'render_output_location' : config['render_output_location'],
+    'file_format' : config['file_format'],
 }
 
 def change_rendersettings(scene, settings):

@@ -3,3 +3,4 @@ __pycache__
 .sync
 venv
 test.py
+architecture.md

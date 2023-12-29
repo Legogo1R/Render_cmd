@@ -24,17 +24,6 @@
             "overwrite" : true,
             "value" : 50
         },
-        "light_paths" : {
-            "overwrite" : true,
-            "channels" : {
-                "total" : 32,
-                "diffuse" : 32,
-                "glossy" : 32,
-                "transmission" : 32,
-                "volume" : 32,
-                "transparent" : 32
-            }
-        },
         "color_managment" : {
             "overwrite" : true,
             "view_transform" : "Filmic",
@@ -43,7 +32,7 @@
         },
         "render_output_location" : {
             "overwrite" : true,
-            "value" : "//Huy"
+            "value" : "//Renders"
         },
         "file_format" : {
             "overwrite" : true,
@@ -54,8 +43,8 @@
         }
     },
     "render_frames" : {
-        "render" : "a",
-        "frames" : "1..5,7..10"
+        "render" : "Frames",
+        "frame_range" : "1"
     }
     
 

@@ -1,7 +1,7 @@
 import bpy
 import json
 
-with open('f:\\Library\\Blender_Work\\3Devision\\Scripts\\Render_cmd\\rendersettings.json', 'r') as fp:
+with open('f:\\Library\\Blender_Work\\3Devision\\Scripts\\Render_cmd\\render_file_data.json', 'r') as fp:
     config = json.load(fp)
 
 render_settings = {
@@ -11,7 +11,7 @@ render_settings = {
     'render_noice_threshold' : config['render_settings']['render_noice_threshold'],
     'render_denoice' : config['render_settings']['render_denoice'],
     'render_resolution_percentage' : config['render_settings']['render_resolution_percentage'],
-    'light_paths' : config['render_settings']['light_paths'],
+    # 'light_paths' : config['render_settings']['light_paths'],
     'color_managment' : config['render_settings']['color_managment'],
     'render_output_location' : config['render_settings']['render_output_location'],
     'file_format' : config['render_settings']['file_format'],
@@ -44,13 +44,13 @@ def change_rendersettings(scene, settings):
         scene.render.resolution_percentage = settings['render_resolution_percentage']['value']
 
     # LightPaths
-    if settings['light_paths']['overwrite']:
-        scene.cycles.max_bounces = settings['light_paths']['channels']['total']
-        scene.cycles.diffuse_bounces = settings['light_paths']['channels']['diffuse']
-        scene.cycles.glossy_bounces = settings['light_paths']['channels']['glossy']
-        scene.cycles.transmission_bounces = settings['light_paths']['channels']['transmission']
-        scene.cycles.volume_bounces = settings['light_paths']['channels']['volume']
-        scene.cycles.transparent_max_bounces = settings['light_paths']['channels']['transparent']
+    # if settings['light_paths']['overwrite']:
+    #     scene.cycles.max_bounces = settings['light_paths']['channels']['total']
+    #     scene.cycles.diffuse_bounces = settings['light_paths']['channels']['diffuse']
+    #     scene.cycles.glossy_bounces = settings['light_paths']['channels']['glossy']
+    #     scene.cycles.transmission_bounces = settings['light_paths']['channels']['transmission']
+    #     scene.cycles.volume_bounces = settings['light_paths']['channels']['volume']
+    #     scene.cycles.transparent_max_bounces = settings['light_paths']['channels']['transparent']
     
     #Clamping
 #    scene.cycles.sample_clamp_direct = 0

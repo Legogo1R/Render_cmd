@@ -43,7 +43,7 @@
         }
     },
     "render_frames" : {
-        "render" : "Frames",
+        "render_scheme" : "Frames",
         "frame_range" : "1"
     }
     

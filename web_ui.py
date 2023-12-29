@@ -13,19 +13,7 @@ from main_functions import(
 
 )
 
-
-# Session State Variables
-session_state_variables = {
-    'new_files_counter' : 1,
-    'all_correct' : False,
-    'files_data' : {},
-}
-
-# Create session_state variables
-for var, value in session_state_variables.items():
-    if var not in st.session_state:
-        st.session_state[var] = value
-
+## SESION_STATE VARIABLES NEED TO BE IN LAUNCH FILE
 
 def draw_header(localization, language):
     """
@@ -47,7 +35,7 @@ def draw_main_container(localization, language):
     stores data for use in rendering process
     """
 
-    with st.container(border=True):
+    with st.container(border=False):
         st.write('Add files to render')
         for count in range(st.session_state['new_files_counter']):
 
@@ -401,6 +389,14 @@ def store_rendersettings(file_num, state_param, **kwargs):
     for key, value in kwargs.items():
         st.session_state['files_data'][file_num+1]['render_settings'][state_param][key] = value
 
+def draw_stop_button(localization, language):
+    """
+    Stop button which stops rendering process
+    """
+
+    stop_render_bt = st.button('Stop Render')
+    if stop_render_bt:
+        st.stop()
 
 def draw_render_button(localization, language):
     """
@@ -413,10 +409,12 @@ def draw_render_button(localization, language):
         for file_data in st.session_state['files_data'].values():
             if file_data['correct_input'] == False:
                 return st.write('Check file inputs. Something is wrong!')
+            elif file_data['render_settings']['render']['render_type'] == 'Frames' and file_data['render_settings']['render']['frame_range'] == '':
+                return st.write('Input frame range!')
   
         # RENDERING CYCLE
         # Get data from Session_state dict
-        for index, file_data in stqdm(st.session_state['files_data'].items()):
+        for index, file_data in st.session_state['files_data'].items():
 
             # Saves to .json for other scripts to take data from
             with open('render_file_data.json', 'w+', encoding='utf-8') as dict:
@@ -436,8 +434,8 @@ def draw_render_button(localization, language):
                                            file_data['render_settings']['render']['frame_range'])
 
             console_command = f'{blender} {arg_blend_file} {arg_scripts} {arg_scenes}'
-            st.write(console_command)
-            # start_render(console_command)
+            # st.write(console_command)
+            start_render(console_command)
         
 def add_file_container_bt_ac(file_num):
     """

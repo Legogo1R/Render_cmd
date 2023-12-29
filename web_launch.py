@@ -11,8 +11,21 @@ from main_functions import (
 from web_ui import (
     draw_header,
     draw_main_container,
-    draw_render_button
+    draw_render_button,
+    draw_stop_button
 )
+
+# Session State Variables
+session_state_variables = {
+    'new_files_counter' : 1,
+    'all_correct' : False,
+    'files_data' : {},
+}
+
+# Create session_state variables
+for var, value in session_state_variables.items():
+    if var not in st.session_state:
+        st.session_state[var] = value
 
 
 # Open localization json
@@ -31,5 +44,6 @@ if __name__ == '__main__':
 
     # Rendering cycle
     draw_render_button(localiz_dict, cur_language)
+    # draw_stop_button(localiz_dict, cur_language)
 
-    st.write(st.session_state)
+    # st.write(st.session_state)

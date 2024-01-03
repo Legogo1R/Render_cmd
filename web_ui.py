@@ -1,6 +1,7 @@
 import streamlit as st
 from time import sleep
 from stqdm import stqdm
+import time, signal
 
 import os, json
 
@@ -10,6 +11,7 @@ from main_functions import(
     get_scene_names,
     scenes2arg_scenes,
     scripts2string,
+    stop_render
 
 )
 
@@ -93,7 +95,8 @@ def draw_file_data(localization, language, file_num):
             draw_render_settings(localization, language, file_num)
 
     except FileNotFoundError:
-        st.write('Wrong path')
+        # st.write('Wrong path')
+        draw_message(True, 'Wrong path', 'ERROR')
         col2.write(':red_circle:')
         st.session_state['files_data'][file_num+1]['correct_input'] = False
 
@@ -192,7 +195,7 @@ def draw_render_settings(localization, language, file_num):
         # render_samples
         kwargs = {'label':'Render samples', 'step':1,
                   'value':256,
-                  'step':256,
+                  'step':128,
                   'min_value': 0,                 
                   'key':f'render_samples_{file_num+1}'}
         param, toggle = render_settings_block(col_param1, col_toggle1, 'number_input', kwargs,
@@ -389,28 +392,33 @@ def store_rendersettings(file_num, state_param, **kwargs):
     for key, value in kwargs.items():
         st.session_state['files_data'][file_num+1]['render_settings'][state_param][key] = value
 
-def draw_stop_button(localization, language):
+def draw_stop_button(localization, language, process):
     """
     Stop button which stops rendering process
     """
 
-    stop_render_bt = st.button('Stop Render')
+    stop_render_bt = st.button('Stop Render', disabled=not st.session_state['is_rendering'],
+                               on_click=diable_render_buttons)
     if stop_render_bt:
-        st.stop()
+        stop_render(st.session_state['render_process'])
 
 def draw_render_button(localization, language):
     """
     Render button which starts rendering process
     """
 
-    start_render_bt = st.button('Start Render')
+    start_render_bt = st.button('Start Render', disabled=st.session_state['is_rendering'],
+                                on_click=diable_render_buttons)
     if start_render_bt:
         # Checking if all inputs are correct
         for file_data in st.session_state['files_data'].values():
             if file_data['correct_input'] == False:
-                return st.write('Check file inputs. Something is wrong!')
+                error = draw_message(True, 'Check file paths. Something is wrong!', 'ERROR')
+                return error
+            
             elif file_data['render_settings']['render']['render_type'] == 'Frames' and file_data['render_settings']['render']['frame_range'] == '':
-                return st.write('Input frame range!')
+                error = draw_message(True, 'Input frame range!', 'ERROR')
+                return error
   
         # RENDERING CYCLE
         # Get data from Session_state dict
@@ -435,8 +443,16 @@ def draw_render_button(localization, language):
 
             console_command = f'{blender} {arg_blend_file} {arg_scripts} {arg_scenes}'
             # st.write(console_command)
-            start_render(console_command)
+
+            # Need session_state to save varibale and use in other functions
+            st.session_state['render_process'] = start_render(console_command)
         
+def diable_render_buttons():
+    """
+    Callback function to disable render buttons
+    """
+    st.session_state['is_rendering'] = not st.session_state['is_rendering']
+
 def add_file_container_bt_ac(file_num):
     """
     Helper function, works with on_click,
@@ -462,6 +478,21 @@ def remove_file_container_bt_ac(file_num):
     
     if file_num in st.session_state['files_data']:
         del st.session_state['files_data'][file_num]
+
+def draw_message(event_outcome, message, message_type='WARNING'):
+    """
+    Draws a message of given type on desired event
+    """
+    if event_outcome:
+        if message_type == 'ERROR':
+            st.error(message, icon ='🚨')
+        elif message_type == 'WARNING':
+            st.warning(message, icon = '⚠️')
+        elif message_type == 'INFO':
+            st.info(message)
+        elif message_type == 'SUCCESS':
+            st.success(message)
+        
 
 # Needs tweaking but MUST DO
 def file_selector(folder_path='.'):

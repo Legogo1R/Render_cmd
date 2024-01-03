@@ -1,5 +1,5 @@
-import os, sys, subprocess, argparse, psutil
-import re, json
+import os, sys, subprocess, argparse, signal
+import re, json, psutil
 
 import blendfile
 from config import (
@@ -95,7 +95,31 @@ def start_render(console_command):
     """
 
     blender = BLENDER_PATH
-    render = subprocess.run(
-            console_command,
-            shell = True
-        )
+
+
+
+
+    # creationflags=subprocess.CREATE_NEW_PROCESS_GROUP
+    # The os.setsid() is passed in the argument preexec_fn so
+    # it's run after the fork() and before  exec() to run the shell.
+    render_process = subprocess.Popen(console_command,
+                                        #  stdout=subprocess.PIPE,
+                                        #  shell=True
+                                         )
+
+    # render_process = subprocess.run(
+    #         console_command,
+    #         shell = True
+    #     )
+    return render_process
+    
+
+
+
+
+def stop_render(process):
+    """ 
+    Stops current rendering by terminating subprocess group
+    """
+
+    os.kill(process.pid, signal.SIGINT)  # Send the signal to all the process groups

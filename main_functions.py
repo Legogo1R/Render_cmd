@@ -1,5 +1,7 @@
 import os, sys, subprocess, argparse, signal
-import re, json, psutil
+import re, json, time, psutil
+import streamlit as st
+
 
 import blendfile
 from config import (
@@ -89,37 +91,39 @@ def scenes2arg_scenes(scenes, render_type, frame_range):
     return arg_scenes
 
 
-def start_render(console_command):
+def start_render():
     """ 
     Runs blender through command line to render with desired settings
     """
 
-    blender = BLENDER_PATH
-
-
-
-
-    # creationflags=subprocess.CREATE_NEW_PROCESS_GROUP
-    # The os.setsid() is passed in the argument preexec_fn so
-    # it's run after the fork() and before  exec() to run the shell.
-    render_process = subprocess.Popen(console_command,
-                                        #  stdout=subprocess.PIPE,
-                                        #  shell=True
-                                         )
-
-    # render_process = subprocess.run(
-    #         console_command,
-    #         shell = True
-    #     )
-    return render_process
+    # -u for real time printing stdout (not using buffer)
+    command = [sys.executable, '-u', 'render_subprocess.py']
+    process = subprocess.Popen(command,
+                               stdout=subprocess.PIPE,
+                               stderr=subprocess.STDOUT,
+                               universal_newlines=True
+                               )
     
+    while process.poll() is None:
+        line = process.stdout.readline()
+        if not line:
+            continue
+        st.write(line.strip())
 
-
-
-
-def stop_render(process):
+    return process
+    
+def kill_render(process):
     """ 
-    Stops current rendering by terminating subprocess group
+    Kills current rendering by terminating subprocess group
     """
 
-    os.kill(process.pid, signal.SIGINT)  # Send the signal to all the process groups
+    # os.kill(process.pid, signal.SIGINT)  # Send the signal to kill a process
+
+    parent = psutil.Process(process.pid)
+    children = parent.children(recursive=True)
+    for child in children:
+        child.kill()
+    # gone, still_alive = psutil.wait_procs(children, timeout=2)
+    parent.kill()
+    parent.wait(3)
+

@@ -1,17 +1,15 @@
 import streamlit as st
-from time import sleep
 from stqdm import stqdm
 import time, signal
-
-import os, json
+import os, json, psutil
 
 from config import *
-from main_functions import(
+from main_functions import (
     start_render,
     get_scene_names,
     scenes2arg_scenes,
     scripts2string,
-    stop_render
+    kill_render,
 
 )
 
@@ -398,9 +396,15 @@ def draw_stop_button(localization, language, process):
     """
 
     stop_render_bt = st.button('Stop Render', disabled=not st.session_state['is_rendering'],
-                               on_click=diable_render_buttons)
+                               on_click=disable_render_buttons)
     if stop_render_bt:
-        stop_render(st.session_state['render_process'])
+
+        #KILL RENDER PROCESS
+        try:
+            kill_render(st.session_state['render_process'])
+        except psutil.NoSuchProcess:
+            st.write('Cannot find a process to stop..')
+            st.write('Maybe the rendering process has been terminated already?')
 
 def draw_render_button(localization, language):
     """
@@ -408,7 +412,7 @@ def draw_render_button(localization, language):
     """
 
     start_render_bt = st.button('Start Render', disabled=st.session_state['is_rendering'],
-                                on_click=diable_render_buttons)
+                                on_click=disable_render_buttons)
     if start_render_bt:
         # Checking if all inputs are correct
         for file_data in st.session_state['files_data'].values():
@@ -420,34 +424,19 @@ def draw_render_button(localization, language):
                 error = draw_message(True, 'Input frame range!', 'ERROR')
                 return error
   
-        # RENDERING CYCLE
-        # Get data from Session_state dict
-        for index, file_data in st.session_state['files_data'].items():
-
+        # START RENDER PROCESS
             # Saves to .json for other scripts to take data from
-            with open('render_file_data.json', 'w+', encoding='utf-8') as dict:
-                json.dump(file_data['render_settings'], dict, ensure_ascii=False, indent=4)
+        with open('temp_render_file_data.json', 'w+', encoding='utf-8') as dict:
+            json.dump(st.session_state['files_data'], dict, ensure_ascii=False, indent=4)
 
-            # blender.exe
-            blender = BLENDER_PATH
-            #.blend file path
-            blend_file = file_data['path']
-            arg_blend_file = f'-b {blend_file}'
-            # Scripts pathes
-            scripts_str = file_data['scripts']
-            arg_scripts = f'-P {scripts_str}'
-            # Scenes
-            arg_scenes = scenes2arg_scenes(file_data['selected_scenes'],
-                                           file_data['render_settings']['render']['render_type'],
-                                           file_data['render_settings']['render']['frame_range'])
+        st.session_state['render_process'] = start_render()  # Need session_state to save varibale and use in other functions
+        # st.write(st.session_state['files_data'])
 
-            console_command = f'{blender} {arg_blend_file} {arg_scripts} {arg_scenes}'
-            # st.write(console_command)
+# @st.cache_resource
+# def test_state():
+#     return dict()
 
-            # Need session_state to save varibale and use in other functions
-            st.session_state['render_process'] = start_render(console_command)
-        
-def diable_render_buttons():
+def disable_render_buttons():
     """
     Callback function to disable render buttons
     """

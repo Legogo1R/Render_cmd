@@ -7,7 +7,8 @@ from main_functions import (
     createParser,
     is_blender_running,
     start_render,
-    stop_render
+    kill_render,
+    
 )
 
 from web_ui import (
@@ -55,9 +56,3 @@ if __name__ == '__main__':
     draw_stop_button(localiz_dict, cur_language,
                         st.session_state['render_process'])
 
-
-            
-
-    
-
-    # st.write(st.session_state)

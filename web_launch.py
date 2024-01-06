@@ -8,6 +8,7 @@ from main_functions import (
     is_blender_running,
     start_render,
     kill_render,
+    search_sort_log
     
 )
 
@@ -52,7 +53,22 @@ if __name__ == '__main__':
 
     # Rendering cycle
     draw_render_button(localiz_dict, cur_language)
-    # if st.session_state['is_rendering']:
+    
     draw_stop_button(localiz_dict, cur_language,
                         st.session_state['render_process'])
+    
+    # Render log
+    if st.session_state['is_rendering']:
+        st.write(f'Render started at: {st.session_state["start_render_time"]}')
+        render_data = search_sort_log('render_log.txt')
+        if render_data != None:
+            st.write(render_data.strip())
+
+            # st.write(f"Curent frame: {render_data['frame']}")
+            # st.write(f"Elapsed time: {render_data['time']}")
+            # st.write(f"Remaining time: {render_data['remaining']}")
+
+        time.sleep(2)
+        st.rerun()
+
 

@@ -425,12 +425,22 @@ def draw_render_button(localization, language):
                 return error
   
         # START RENDER PROCESS
-            # Saves to .json for other scripts to take data from
+        # Saves to .json for other scripts to take data from
         with open('temp_render_file_data.json', 'w+', encoding='utf-8') as dict:
             json.dump(st.session_state['files_data'], dict, ensure_ascii=False, indent=4)
 
-        st.session_state['render_process'] = start_render()  # Need session_state to save varibale and use in other functions
-        # st.write(st.session_state['files_data'])
+        process = start_render()
+        st.session_state['render_process'] = process  # Need session_state to save varibale and use in other functions
+        st.session_state['start_render_time'] = time.strftime("%H:%M:%S")
+
+
+
+        # while process.poll() is None:
+        #     line = process.stdout.readline()
+        #     if not line:
+        #         continue
+        #     st.write(line.strip())
+
 
 # @st.cache_resource
 # def test_state():

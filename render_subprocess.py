@@ -11,7 +11,6 @@ from main_functions import (
 
 # RENDERING CYCLE
 # Get data from temp json file
-print('########')
 with open('temp_render_file_data.json') as file:
     temp_json = json.load(file)
 
@@ -41,4 +40,8 @@ for index, file_data in temp_json.items():
                             #    stderr=subprocess.STDOUT,
                             #    universal_newlines=True
                             )
-    process.wait()
+
+    return_code = process.wait()
+    # Ensure exit
+    if return_code:
+        raise subprocess.CalledProcessError(return_code, console_command)

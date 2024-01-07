@@ -1,6 +1,6 @@
 import streamlit as st
-import time
-import os, json, psutil
+import wx
+import os, sys, json, psutil, time
 
 from config import *
 from main_functions import (
@@ -421,9 +421,14 @@ def draw_render_button(localization, language):
             with open('temp_render_file_data.json', 'w+', encoding='utf-8') as dict:
                 json.dump(st.session_state['files_data'], dict, ensure_ascii=False, indent=4)
 
-            process = start_render()
-            st.session_state['render_process'] = process  # Need session_state to save varibale and use in other functions
-            st.session_state['start_render_time'] = time.strftime("%H:%M:%S")
+            try:
+                process = start_render()
+                st.session_state['render_process'] = process  # Need session_state to save varibale and use in other functions
+                st.session_state['start_render_time'] = time.strftime("%H:%M:%S")
+            except:
+                st.write(f"Couldn't run render process")
+                e = sys.exc_info()
+                st.error(e)
 
 def is_correct_inputs():
     """

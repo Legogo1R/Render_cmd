@@ -97,10 +97,10 @@ def start_render():
     command = [sys.executable, '-u', 'render_subprocess.py']
     with open ('render_log.txt', 'w') as f:  # Redirect stdout to .txt, to display in streamlit
         process = subprocess.Popen(command,
-                                stdout=f,
-                                # stderr=subprocess.STDOUT,
-                                # universal_newlines=True
-                                )
+                            stdout=f,
+                            # stderr=subprocess.STDOUT,
+                            # universal_newlines=True
+                            )
 
     return process
     

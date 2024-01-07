@@ -68,7 +68,7 @@ def draw_file_data(localization, language, file_num):
         st.subheader(file_num+1)
 
     with col3:
-        st.wrtie(os.path.isdir('n:'))
+        st.write(os.path.isdir('n:'))
         file_path_input = st.text_input(
             label='Select file to render',
             value =RSYNC_FOLDER_PATH,

@@ -1,7 +1,4 @@
-import os, sys, subprocess, argparse, signal
-import re, json, time, psutil
-import streamlit as st
-
+import os, sys, subprocess, argparse, signal, psutil
 
 import blendfile
 from config import (
@@ -112,27 +109,28 @@ def kill_render(process):
     Kills current rendering by terminating subprocess group
     """
 
-    # os.kill(process.pid, signal.SIGINT)  # Send the signal to kill a process
-
     parent = psutil.Process(process.pid)
     children = parent.children(recursive=True)
     for child in children:
-        child.kill()
+        # child.kill()
+        os.kill(child.pid, signal.SIGINT)  # SIGINT looks safer then kill(), but i dunno..
     # gone, still_alive = psutil.wait_procs(children, timeout=2)
-    parent.kill()
+    # parent.kill()
+    os.kill(parent.pid, signal.SIGINT)
     parent.wait(3)
 
 def search_sort_log(file):
     """
     Extract data from log
     """
-    extracted_data = {}
-    extracted_data['valid'] = False
-    extracted_data['frame'] = 'N/A'
-    extracted_data['time'] = 'N/A'
-    extracted_data['remaining'] = 'N/A'
-    extracted_data['scene'] = 'N/A'
-    extracted_data['viewlayer'] = 'N/A'
+
+    # extracted_data = {}
+    # extracted_data['valid'] = False
+    # extracted_data['frame'] = 'N/A'
+    # extracted_data['time'] = 'N/A'
+    # extracted_data['remaining'] = 'N/A'
+    # extracted_data['scene'] = 'N/A'
+    # extracted_data['viewlayer'] = 'N/A'
 
     with open (file, 'rb') as f:
             # Take last line from file

@@ -41,9 +41,15 @@ cur_language = 'en'
 
 if __name__ == '__main__':
     # Display only on other instances of blender, not rendering by this process
-    if not psutil.pid_exists(st.session_state['render_process'].pid):
-        message = 'An instance of Blender is already running on the server! Rendering 2 projects at once might not be a good idea..'
+    message = 'An instance of Blender is already running on the server! Rendering 2 projects at once might not be a good idea..'
+
+    if st.session_state['render_process'] == None:
         draw_message(is_blender_running(), message, 'WARNING')
+    else:
+        if not psutil.pid_exists(st.session_state['render_process'].pid):
+            draw_message(is_blender_running(), message, 'WARNING')
+
+
 
     draw_header(localiz_dict, cur_language)
 

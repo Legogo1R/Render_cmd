@@ -1,15 +1,10 @@
-import os, json, signal
+import os, json, time, psutil
 import streamlit as st
-import time
 
 from config import *
 from main_functions import (
-    createParser,
     is_blender_running,
-    start_render,
-    kill_render,
     search_sort_log
-    
 )
 
 from web_ui import (
@@ -26,6 +21,7 @@ session_state_variables = {
     'all_correct' : False,
     'is_rendering' : False,
     'render_process' : None,
+    'completed_successfull' : False,
     'files_data' : {},
 }
 
@@ -44,9 +40,11 @@ cur_language = 'en'
 
 
 if __name__ == '__main__':
+    # Display only on other instances of blender, not rendering by this process
+    if not psutil.pid_exists(st.session_state['render_process'].pid):
+        message = 'An instance of Blender is already running on the server! Rendering 2 projects at once might not be a good idea..'
+        draw_message(is_blender_running(), message, 'WARNING')
 
-    message = 'An instance of Blender is already running on the server! Rendering 2 projects at once might not be a good idea..'
-    # draw_message(is_blender_running(), message, 'WARNING')
     draw_header(localiz_dict, cur_language)
 
     draw_main_container(localiz_dict, cur_language)
@@ -68,7 +66,21 @@ if __name__ == '__main__':
             # st.write(f"Elapsed time: {render_data['time']}")
             # st.write(f"Remaining time: {render_data['remaining']}")
 
-        time.sleep(2)
+        # Check if render process is running and if complited successfully
+        if not psutil.pid_exists(st.session_state['render_process'].pid):
+            st.session_state['is_rendering'] = False
+        if st.session_state['render_process'].poll() != None:
+            st.session_state['completed_successfull'] = True
+    
+        time.sleep(3)
         st.rerun()
+
+    # If render process completed successfully
+    if st.session_state['completed_successfull']:
+        st.session_state['completed_successfull'] = False
+        draw_message(True, 'Rendering was successfull.', 'SUCCESS')
+        st.write(f'Render started at: {st.session_state["start_render_time"]}')
+        st.write(f'Render finished at: {time.strftime("%H:%M:%S")}')
+
 
 

@@ -1,4 +1,4 @@
-import os, json, time, psutil, wx
+import os, json, time, psutil
 import streamlit as st
 
 from config import *

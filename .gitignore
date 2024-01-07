@@ -2,7 +2,7 @@ __pycache__
 .ipynb_checkpoints
 .sync
 venv
-test.py
+
 architecture.md
 temp_render_file_data.json
 render_file_data.json

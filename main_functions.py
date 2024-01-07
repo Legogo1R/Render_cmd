@@ -97,12 +97,12 @@ def start_render():
     Runs blender through command line to render with desired settings
     """
 
-    if IS_NET_DRIVE:
-        # Disconnect anything on M
-        subprocess.call(fr'net use {MOUNT}: /del', shell=True)
+    # if IS_NET_DRIVE:
+    #     # Disconnect anything on M
+    #     subprocess.call(fr'net use {MOUNT}: /del', shell=True)
 
-        # Connect to shared drive, use drive letter M
-        subprocess.call(fr'net use {MOUNT}: {NET_PATH} /user:{USER} {PASSWORD}', shell=True)
+    #     # Connect to shared drive, use drive letter M
+    #     subprocess.call(fr'net use {MOUNT}: {NET_PATH} /user:{USER} {PASSWORD}', shell=True)
 
     # -u for real time printing stdout (not using buffer)
     command = [sys.executable, '-u', 'render_subprocess.py']

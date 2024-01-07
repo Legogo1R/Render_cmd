@@ -394,7 +394,7 @@ def draw_stop_button(localization, language, process):
     """
 
     stop_render_bt = st.button('Stop Render', disabled=not st.session_state['is_rendering'],
-                               on_click=disable_render_buttons)
+                               on_click=stop_render_bt_onclick)
     if stop_render_bt:
 
         #KILL RENDER PROCESS
@@ -411,28 +411,41 @@ def draw_render_button(localization, language):
     """
 
     start_render_bt = st.button('Start Render', disabled=st.session_state['is_rendering'],
-                                on_click=disable_render_buttons)
+                                on_click=start_render_bt_onclick)
     if start_render_bt:
-        # Checking if all inputs are correct
-        for file_data in st.session_state['files_data'].values():
-            if file_data['correct_input'] == False:
-                error = draw_message(True, 'Check file paths. Something is wrong!', 'ERROR')
-                return error
-            
-            elif file_data['render_settings']['render']['render_type'] == 'Frames' and file_data['render_settings']['render']['frame_range'] == '':
-                error = draw_message(True, 'Input frame range', 'ERROR')
-                return error
-  
-        # START RENDER PROCESS
-        # Saves to .json for other scripts to take data from
-        with open('temp_render_file_data.json', 'w+', encoding='utf-8') as dict:
-            json.dump(st.session_state['files_data'], dict, ensure_ascii=False, indent=4)
+        if not is_correct_inputs():
+            draw_message(True, 'Check inputs. Something is wrong!', 'ERROR')
+        else:
+            # START RENDER PROCESS
+            # Saves to .json for other scripts to take data from
+            with open('temp_render_file_data.json', 'w+', encoding='utf-8') as dict:
+                json.dump(st.session_state['files_data'], dict, ensure_ascii=False, indent=4)
 
-        process = start_render()
-        st.session_state['render_process'] = process  # Need session_state to save varibale and use in other functions
-        st.session_state['start_render_time'] = time.strftime("%H:%M:%S")
+            process = start_render()
+            st.session_state['render_process'] = process  # Need session_state to save varibale and use in other functions
+            st.session_state['start_render_time'] = time.strftime("%H:%M:%S")
 
-def disable_render_buttons():
+def is_correct_inputs():
+    """
+    Check if inputs correct and can start render
+    """
+
+    for file_data in st.session_state['files_data'].values():
+        if file_data['correct_input'] == False:
+            return False
+        elif file_data['render_settings']['render']['render_type'] == 'Frames' and file_data['render_settings']['render']['frame_range'] == '':
+            return False
+    
+    return True
+
+def start_render_bt_onclick():
+    """
+    Callback function to disable render buttons
+    """
+    if is_correct_inputs():
+        st.session_state['is_rendering'] = not st.session_state['is_rendering']
+
+def stop_render_bt_onclick():
     """
     Callback function to disable render buttons
     """

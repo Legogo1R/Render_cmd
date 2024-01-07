@@ -2,11 +2,6 @@ import os, sys, subprocess, argparse, signal, psutil
 
 import blendfile
 from config import (
-    IS_NET_DRIVE,
-    MOUNT,
-    NET_PATH,
-    USER,
-    PASSWORD,
     SCRIPT_PATH,
     PERM_SCRIPTS_PATH,
     MAIN_PATH
@@ -96,13 +91,6 @@ def start_render():
     """ 
     Runs blender through command line to render with desired settings
     """
-
-    # if IS_NET_DRIVE:
-    #     # Disconnect anything on M
-    #     subprocess.call(fr'net use {MOUNT}: /del', shell=True)
-
-    #     # Connect to shared drive, use drive letter M
-    #     subprocess.call(fr'net use {MOUNT}: {NET_PATH} /user:{USER} {PASSWORD}', shell=True)
 
     # -u for real time printing stdout (not using buffer)
     command = [sys.executable, '-u', 'render_subprocess.py']

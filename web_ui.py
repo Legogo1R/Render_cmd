@@ -91,7 +91,7 @@ def draw_file_data(localization, language, file_num):
         with col2:
             draw_render_settings(localization, language, file_num)
 
-    except FileNotFoundError:
+    except (FileNotFoundError, PermissionError, OSError):
         draw_message(True, 'Wrong path', 'ERROR')
         col2.write(':red_circle:')
         st.session_state['files_data'][file_num+1]['correct_input'] = False

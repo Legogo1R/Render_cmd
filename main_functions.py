@@ -93,6 +93,12 @@ def start_render():
     Runs blender through command line to render with desired settings
     """
 
+    # Disconnect anything on M
+    # subprocess.call(r'net use m: /del', shell=True)
+
+    # Connect to shared drive, use drive letter M
+    # subprocess.call(r'net use m: \\shared\folder /user:user123 password', shell=True)
+
     # -u for real time printing stdout (not using buffer)
     command = [sys.executable, '-u', 'render_subprocess.py']
     with open ('render_log.txt', 'w') as f:  # Redirect stdout to .txt, to display in streamlit

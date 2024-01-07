@@ -32,7 +32,7 @@ for index, file_data in temp_json.items():
                                 file_data['render_settings']['render']['render_type'],
                                 file_data['render_settings']['render']['frame_range'])
 
-    console_command = f'{blender} {arg_blend_file} {arg_scripts} {arg_scenes}'
+    console_command = f'"{blender}" {arg_blend_file} {arg_scripts} {arg_scenes}'
 
     process = subprocess.Popen(console_command,
                             #    stdout=subprocess.PIPE,

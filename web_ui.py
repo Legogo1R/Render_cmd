@@ -1,5 +1,4 @@
 import streamlit as st
-import wx
 import os, sys, json, psutil, time
 
 from config import *
@@ -71,6 +70,7 @@ def draw_file_data(localization, language, file_num):
     with col3:
         file_path_input = st.text_input(
             label='Select file to render',
+            value =RSYNC_FOLDER_PATH,
             placeholder='path\\to\\file.blend',
             key=f'file_path_{file_num+1}',
         )

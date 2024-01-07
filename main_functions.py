@@ -36,13 +36,13 @@ def scripts2string(scrits_before, scripts_after, scripts_optional):
     tmp_lst = []
     for script_name in scrits_before:
         if script_name != '':  # Checks for empty strings, but still elements of a list
-            tmp_lst.append(os.path.sep.join([MAIN_PATH, PERM_SCRIPTS_PATH, script_name]))
+            tmp_lst.append(os.path.sep.join([MAIN_PATH, SCRIPT_PATH, PERM_SCRIPTS_PATH, script_name]))
     str_scripts_before = " ".join(filter(None, tmp_lst))  # Needs to be as 1 string
     
     tmp_lst = []
     for script_name in scripts_after:
         if script_name != '': 
-            tmp_lst.append(os.path.sep.join([MAIN_PATH, PERM_SCRIPTS_PATH, script_name]))
+            tmp_lst.append(os.path.sep.join([MAIN_PATH, SCRIPT_PATH, PERM_SCRIPTS_PATH, script_name]))
     str_scripts_after = " ".join(filter(None, tmp_lst))  # Needs to be as 1 string
 
     # Optional scripts that can be passed as arguments, will be run in between

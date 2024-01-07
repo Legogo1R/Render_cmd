@@ -72,7 +72,6 @@ def change_rendersettings(scene, settings):
     if settings['color_managment']['overwrite']:
         scene.view_settings.view_transform = settings['color_managment']['view_transform']
         scene.view_settings.look = settings['color_managment']['look']
-        scene.sequencer_colorspace_settings.name = settings['color_managment']['colorspace']
     
     """Output Properties"""
     

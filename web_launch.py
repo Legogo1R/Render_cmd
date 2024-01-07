@@ -1,4 +1,4 @@
-import os, json, time, psutil
+import os, json, time, psutil, wx
 import streamlit as st
 
 from config import *
@@ -48,8 +48,6 @@ if __name__ == '__main__':
         if not psutil.pid_exists(st.session_state['render_process'].pid):
             draw_message(is_blender_running(), message, 'WARNING')
 
-
-
     draw_header(localiz_dict, cur_language)
 
     draw_main_container(localiz_dict, cur_language)
@@ -77,6 +75,7 @@ if __name__ == '__main__':
         if st.session_state['render_process'].poll() != None:
             st.session_state['completed_successfull'] = True
     
+        # How often to update data from render_log
         time.sleep(3)
         st.rerun()
 

@@ -1,6 +1,5 @@
 import streamlit as st
-from stqdm import stqdm
-import time, signal
+import time
 import os, json, psutil
 
 from config import *
@@ -13,7 +12,7 @@ from main_functions import (
 
 )
 
-## SESION_STATE VARIABLES NEED TO BE IN LAUNCH FILE
+## SESION_STATE VARIABLES NEED TO BE IN A LAUNCH FILE
 
 def draw_header(localization, language):
     """
@@ -93,7 +92,6 @@ def draw_file_data(localization, language, file_num):
             draw_render_settings(localization, language, file_num)
 
     except FileNotFoundError:
-        # st.write('Wrong path')
         draw_message(True, 'Wrong path', 'ERROR')
         col2.write(':red_circle:')
         st.session_state['files_data'][file_num+1]['correct_input'] = False
@@ -402,6 +400,7 @@ def draw_stop_button(localization, language, process):
         #KILL RENDER PROCESS
         try:
             kill_render(st.session_state['render_process'])
+            draw_message(True, 'Rendering process was terminated by user.', 'INFO')
         except psutil.NoSuchProcess:
             st.write('Cannot find a process to stop..')
             st.write('Maybe the rendering process has been terminated already?')
@@ -421,7 +420,7 @@ def draw_render_button(localization, language):
                 return error
             
             elif file_data['render_settings']['render']['render_type'] == 'Frames' and file_data['render_settings']['render']['frame_range'] == '':
-                error = draw_message(True, 'Input frame range!', 'ERROR')
+                error = draw_message(True, 'Input frame range', 'ERROR')
                 return error
   
         # START RENDER PROCESS
@@ -432,19 +431,6 @@ def draw_render_button(localization, language):
         process = start_render()
         st.session_state['render_process'] = process  # Need session_state to save varibale and use in other functions
         st.session_state['start_render_time'] = time.strftime("%H:%M:%S")
-
-
-
-        # while process.poll() is None:
-        #     line = process.stdout.readline()
-        #     if not line:
-        #         continue
-        #     st.write(line.strip())
-
-
-# @st.cache_resource
-# def test_state():
-#     return dict()
 
 def disable_render_buttons():
     """
@@ -484,9 +470,9 @@ def draw_message(event_outcome, message, message_type='WARNING'):
     """
     if event_outcome:
         if message_type == 'ERROR':
-            st.error(message, icon ='🚨')
+            st.error(message)
         elif message_type == 'WARNING':
-            st.warning(message, icon = '⚠️')
+            st.warning(message)
         elif message_type == 'INFO':
             st.info(message)
         elif message_type == 'SUCCESS':

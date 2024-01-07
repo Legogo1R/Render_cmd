@@ -13,7 +13,7 @@
     },
     "render_samples": {
         "overwrite": true,
-        "value": 128
+        "value": 256
     },
     "render_noice_threshold": {
         "overwrite": false,
@@ -21,7 +21,7 @@
     },
     "render_resolution_percentage": {
         "overwrite": true,
-        "value": 50
+        "value": 10
     },
     "render_denoice": {
         "overwrite": false,

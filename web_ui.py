@@ -68,6 +68,7 @@ def draw_file_data(localization, language, file_num):
         st.subheader(file_num+1)
 
     with col3:
+        st.wrtie(os.path.isdir('n:'))
         file_path_input = st.text_input(
             label='Select file to render',
             value =RSYNC_FOLDER_PATH,
@@ -91,7 +92,8 @@ def draw_file_data(localization, language, file_num):
         with col2:
             draw_render_settings(localization, language, file_num)
 
-    except (FileNotFoundError, PermissionError, OSError):
+    # PermissionError, OSError
+    except FileNotFoundError:
         draw_message(True, 'Wrong path', 'ERROR')
         col2.write(':red_circle:')
         st.session_state['files_data'][file_num+1]['correct_input'] = False

@@ -13,7 +13,7 @@
     },
     "render_samples": {
         "overwrite": true,
-        "value": 5
+        "value": 128
     },
     "render_noice_threshold": {
         "overwrite": false,
@@ -21,7 +21,7 @@
     },
     "render_resolution_percentage": {
         "overwrite": true,
-        "value": 25
+        "value": 50
     },
     "render_denoice": {
         "overwrite": false,
@@ -40,7 +40,7 @@
         "overwrite_files": true
     },
     "render": {
-        "render_type": "Animation",
-        "frame_range": ""
+        "render_type": "Frames",
+        "frame_range": "1"
     }
 }

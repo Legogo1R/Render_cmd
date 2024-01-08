@@ -25,8 +25,6 @@ session_state_variables = {
     'files_data' : {},
 }
 
-
-st.write('huy')
 # Add os env variable for blender script to search for path
 if 'Render_cmd' not in os.environ:
     os.environ['Render_cmd'] = MAIN_PATH

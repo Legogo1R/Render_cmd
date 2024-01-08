@@ -15,7 +15,7 @@ from web_ui import (
     draw_message
 )
 
-# Session State Variables
+# Session State Variablescache_functions
 session_state_variables = {
     'new_files_counter' : 1,
     'all_correct' : False,
@@ -26,6 +26,7 @@ session_state_variables = {
 }
 
 
+st.write('huy')
 # Add os env variable for blender script to search for path
 if 'Render_cmd' not in os.environ:
     os.environ['Render_cmd'] = MAIN_PATH

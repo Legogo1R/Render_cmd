@@ -8,3 +8,4 @@ temp_render_file_data.json
 render_file_data.json
 render_log.txt
 config.py
+start-server.ps1

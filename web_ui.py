@@ -167,7 +167,7 @@ def draw_render_settings(localization, language, file_num):
         store_rendersettings(file_num, 'render_output_location', **parameters)  # store parameters
 
         # 4 columns to display 2 parameters in 1 row BECAUSE F** Streamlit can't allow multipple columns inside collumns
-        col_param1, col_toggle1, col_param2, col_toggle2 = st.columns([5,3,5,3])
+        col_param1, col_toggle1, col_param2, col_toggle2 = st.columns([6,3,6,3])
 
         # render_scheme
         kwargs = {'label':'Render scheme', 'options':['OPTIX', 'CUDA'],

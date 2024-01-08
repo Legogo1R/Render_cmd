@@ -82,7 +82,7 @@ def draw_file_data(localization, language, file_num):
         st.session_state['files_data'][file_num+1]['scenes'] = []  # Same
         st.session_state['files_data'][file_num+1]['correct_input'] = True
 
-        scenes = get_scene_names(file_path_input)
+        scenes = get_scene_names_cached(file_path_input)
         col2.write(':large_green_circle:')
 
         col1, buf, col2 = st.columns([4,1,15])
@@ -496,7 +496,11 @@ def draw_message(event_outcome, message, message_type='WARNING'):
             st.info(message)
         elif message_type == 'SUCCESS':
             st.success(message)
-        
+
+@st.cache_data        
+def get_scene_names_cached(blend_file):
+    return get_scene_names(blend_file)
+
 
 # Needs tweaking but MUST DO
 def file_selector(folder_path='.'):

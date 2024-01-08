@@ -351,7 +351,6 @@ def draw_render_settings(localization, language, file_num):
         store_rendersettings(file_num, 'render', **parameters)
 
 
-
 def render_settings_block(col_param, col_toggle, widget, kwargs,
                           checkbox_default=False, checkbox=True,
                           settings_toggle=True):
@@ -378,7 +377,8 @@ def render_settings_block(col_param, col_toggle, widget, kwargs,
         param = getattr(st, widget)(disabled=not toggle, **kwargs)  # To draw any widget you pass to function
 
     return param, toggle
-    
+
+@st.cache_data    
 def store_rendersettings(file_num, state_param, **kwargs):
     """
     Helperfunction for draw_render_settings()
@@ -500,7 +500,6 @@ def draw_message(event_outcome, message, message_type='WARNING'):
 @st.cache_data        
 def get_scene_names_cached(blend_file):
     return get_scene_names(blend_file)
-
 
 # Needs tweaking but MUST DO
 def file_selector(folder_path='.'):

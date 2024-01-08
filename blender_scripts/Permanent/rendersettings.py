@@ -1,7 +1,10 @@
 import bpy
-import json
+import os, json
 
-with open('f:\\Library\\Blender_Work\\3Devision\\Scripts\\Render_cmd\\render_file_data.json', 'r') as fp:
+# Need to add repositoriy path to env variable first
+path = os.path.sep.join([os.environ['Render_cmd'], 'render_file_data.json'])
+
+with open(path, 'r') as fp:
     config = json.load(fp)
 
 render_settings = {

@@ -341,7 +341,8 @@ def draw_render_settings(localization, language, file_num):
         elif render_scheme == 'Animation':
             enabled = False
         # frame_range
-        kwargs = {'label':'Frame range',
+        kwargs = {'label':'Frame range (1,3..7,9,10)',
+                  'value':'1',
                     'placeholder':'1,3..7,9,10',
                     'key':f'frame_range_{file_num+1}'}
         frame_range, toggle = render_settings_block(col_param1, col_toggle1, 'text_input', kwargs,
@@ -377,8 +378,7 @@ def render_settings_block(col_param, col_toggle, widget, kwargs,
         param = getattr(st, widget)(disabled=not toggle, **kwargs)  # To draw any widget you pass to function
 
     return param, toggle
-
-@st.cache_data    
+  
 def store_rendersettings(file_num, state_param, **kwargs):
     """
     Helperfunction for draw_render_settings()

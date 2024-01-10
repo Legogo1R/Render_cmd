@@ -62,7 +62,7 @@ if __name__ == '__main__':
     
     draw_stop_button(localiz_dict, cur_language,
                         st.session_state['render_process'])
-    
+
     # Render log
     if st.session_state['is_rendering']:
         st.write(f'Render started at: {st.session_state["start_render_time"]}')

@@ -143,10 +143,21 @@ def draw_render_settings(localization, language, file_num):
             key=f'opt_scripts_{file_num+1}'
         )
     
-    optional_scripts = optional_scripts_input.split(', ')
-    str_scripts = scripts2string(SCRIPTS_BEFORE,SCRIPTS_AFTER,optional_scripts)
-    st.session_state['files_data'][file_num+1]['scripts'] = str_scripts
+    scripts_before = set(SCRIPTS_BEFORE)
+    scripts_after = set(SCRIPTS_AFTER)
+    optional_scripts = set(optional_scripts_input.split(', '))
 
+    # Relink missing libraries from ASSET_LIBRARY_PATH
+    st.toggle('Find missing Asset-library files', value=True, key='find_missing_files')
+
+    if st.session_state['find_missing_files']:
+        scripts_before.add('relink_asset_libraries.py')
+    else:
+        scripts_before.remove('relink_asset_libraries.py')
+    
+    str_scripts = scripts2string(scripts_before,scripts_after,optional_scripts)
+    st.session_state['files_data'][file_num+1]['scripts'] = str_scripts
+    
     # Render Settings
     render_settings_container = st.container(border=True)
     with render_settings_container:
@@ -484,6 +495,9 @@ def remove_file_container_bt_ac(file_num):
     
     if file_num in st.session_state['files_data']:
         del st.session_state['files_data'][file_num]
+
+def find_missing_files_toggle():
+    st.session_state['find_missing_files']
 
 def draw_message(event_outcome, message, message_type='WARNING'):
     """

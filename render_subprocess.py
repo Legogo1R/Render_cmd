@@ -25,8 +25,7 @@ for index, file_data in temp_json.items():
     blend_file = file_data['path']
     arg_blend_file = f'-b {blend_file}'
     # Scripts pathes
-    scripts_str = file_data['scripts']
-    arg_scripts = f'-P {scripts_str}'
+    arg_scripts = file_data['scripts']
     # Scenes
     arg_scenes = scenes2arg_scenes(file_data['selected_scenes'],
                                 file_data['render_settings']['render']['render_type'],

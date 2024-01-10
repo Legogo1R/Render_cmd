@@ -1,5 +1,6 @@
 import streamlit as st
 import os, sys, json, psutil, time
+from pathlib import PureWindowsPath, PurePosixPath
 
 from config import *
 from main_functions import (
@@ -75,14 +76,15 @@ def draw_file_data(localization, language, file_num):
             placeholder=r'path\to\file.blend',
             key=f'file_path_{file_num+1}',
         )
-        st.session_state['files_data'][file_num+1]['path'] = file_path_input
+        win_file_path_input = str(PureWindowsPath(PurePosixPath(file_path_input)))  # Converts path to windows style '\'
+        st.session_state['files_data'][file_num+1]['path'] = win_file_path_input
 
     try:
         st.session_state['files_data'][file_num+1]['selected_scenes'] = []  # Clear after change in file_path input
         st.session_state['files_data'][file_num+1]['scenes'] = []  # Same
         st.session_state['files_data'][file_num+1]['correct_input'] = True
 
-        scenes = get_scene_names_cached(file_path_input)
+        scenes = get_scene_names_cached(win_file_path_input)
         col2.write(':large_green_circle:')
 
         col1, buf, col2 = st.columns([4,1,15])

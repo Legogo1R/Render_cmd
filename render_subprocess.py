@@ -27,7 +27,7 @@ for index, file_data in temp_json.items():
     # Scripts pathes
     arg_scripts = file_data['scripts']
     # Scenes
-    arg_scenes = scenes2arg_scenes(file_data['selected_scenes'],
+    arg_scenes = scenes2arg_scenes(file_data['render_settings']['selected_scenes'],
                                 file_data['render_settings']['render']['render_type'],
                                 file_data['render_settings']['render']['frame_range'])
 

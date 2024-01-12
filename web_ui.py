@@ -80,7 +80,7 @@ def draw_file_data(localization, language, file_num):
         st.session_state['files_data'][file_num+1]['path'] = win_file_path_input
 
     try:
-        st.session_state['files_data'][file_num+1]['selected_scenes'] = []  # Clear after change in file_path input
+        st.session_state['files_data'][file_num+1]['render_settings']['selected_scenes'] = []  # Clear after change in file_path input
         st.session_state['files_data'][file_num+1]['scenes'] = []  # Same
         st.session_state['files_data'][file_num+1]['correct_input'] = True
 
@@ -106,8 +106,6 @@ def draw_scene_selector(localization, language, file_num, scene_list):
     adds selected scenes to session_state variable
     """
 
-    # st.session_state['files_data'][file_num+1]['selected_scenes'] = []  # Clear after change in file_path input
-
     all_scenes_toggle_chb = st.checkbox(label='All scenes',
                    value=True,
                    key=f'all_scenes_{file_num+1}'
@@ -119,16 +117,16 @@ def draw_scene_selector(localization, language, file_num, scene_list):
         scene_cbx = st.checkbox(scene, value=False,
                                 disabled=all_scenes_toggle_chb, key=f'cbx_{scene}_{file_num+1}')
         if scene_cbx:
-            if scene not in st.session_state['files_data'][file_num+1]['selected_scenes']:
-                st.session_state['files_data'][file_num+1]['selected_scenes'].append(scene)
+            if scene not in st.session_state['files_data'][file_num+1]['render_settings']['selected_scenes']:
+                st.session_state['files_data'][file_num+1]['render_settings']['selected_scenes'].append(scene)
         else:
-            if scene in st.session_state['files_data'][file_num+1]['selected_scenes']:
-                st.session_state['files_data'][file_num+1]['selected_scenes'].remove(scene)
+            if scene in st.session_state['files_data'][file_num+1]['render_settings']['selected_scenes']:
+                st.session_state['files_data'][file_num+1]['render_settings']['selected_scenes'].remove(scene)
 
     # Working with 'All scenes' switch
     
     if st.session_state['files_data'][file_num+1]['all_scenes']:
-        st.session_state['files_data'][file_num+1]['selected_scenes'] = scene_list
+        st.session_state['files_data'][file_num+1]['render_settings']['selected_scenes'] = scene_list
 
 def draw_render_settings(localization, language, file_num):
     """
@@ -143,18 +141,20 @@ def draw_render_settings(localization, language, file_num):
             key=f'opt_scripts_{file_num+1}'
         )
     
-    scripts_before = set(SCRIPTS_BEFORE)
-    scripts_after = set(SCRIPTS_AFTER)
-    optional_scripts = set(optional_scripts_input.split(', '))
+    scripts_before = SCRIPTS_BEFORE
+    scripts_after = SCRIPTS_AFTER
+    optional_scripts = optional_scripts_input.split(', ')
 
     # Relink missing libraries from ASSET_LIBRARY_PATH
     st.toggle('Find missing Asset-library files', value=True, key='find_missing_files')
 
     if st.session_state['find_missing_files']:
-        scripts_before.add('relink_asset_libraries.py')
+        if 'relink_asset_libraries.py' not in scripts_before: 
+            scripts_before.insert(0, 'relink_asset_libraries.py')
     else:
-        scripts_before.remove('relink_asset_libraries.py')
-    
+        if 'relink_asset_libraries.py' in scripts_before:
+            scripts_before.remove('relink_asset_libraries.py')
+
     str_scripts = scripts2string(scripts_before,scripts_after,optional_scripts)
     st.session_state['files_data'][file_num+1]['scripts'] = str_scripts
     
@@ -479,10 +479,10 @@ def add_file_container_bt_ac(file_num):
     st.session_state['new_files_counter'] += 1
     if file_num+1 not in st.session_state['files_data']:
         st.session_state['files_data'][file_num+1] = {}
-        st.session_state['files_data'][file_num+1]['correct_input'] = False
-        st.session_state['files_data'][file_num+1]['selected_scenes'] = []
-        st.session_state['files_data'][file_num+1]['scripts'] = ''
         st.session_state['files_data'][file_num+1]['render_settings'] = {}
+        st.session_state['files_data'][file_num+1]['render_settings']['selected_scenes'] = []
+        st.session_state['files_data'][file_num+1]['correct_input'] = False
+        st.session_state['files_data'][file_num+1]['scripts'] = ''
         
 def remove_file_container_bt_ac(file_num):
     """

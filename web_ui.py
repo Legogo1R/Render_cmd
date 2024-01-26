@@ -157,6 +157,8 @@ def draw_render_settings(localization, language, file_num):
 
     str_scripts = scripts2string(scripts_before,scripts_after,optional_scripts)
     st.session_state['files_data'][file_num+1]['scripts'] = str_scripts
+
+    # st.write(scripts_before)
     
     # Render Settings
     render_settings_container = st.container(border=True)
@@ -446,7 +448,7 @@ def draw_render_button(localization, language):
 
 def is_correct_inputs():
     """
-    Check if inputs correct and can start render
+    Check if inputs are correct and can start render
     """
 
     for file_data in st.session_state['files_data'].values():

@@ -448,7 +448,7 @@ def draw_render_button(localization, language):
 
 def is_correct_inputs():
     """
-    Check if inputs are correct and can start render
+    Check if inputs are correct and can start render.
     """
 
     for file_data in st.session_state['files_data'].values():

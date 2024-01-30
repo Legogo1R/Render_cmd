@@ -369,8 +369,9 @@ def draw_render_settings(localization, language, file_num):
             parameters = {'render_type':render_scheme}
 
             # sid_temporal_denoice
-            sid_toggle = st.toggle(label='Use SID Temporal Denoicer',  # Important toggle that switches on/off all settings' overwrite
-                                        key=f'sid_settings_overwrite_{file_num+1}')
+            sid_toggle = st.toggle(label='Use SID Temporal Denoicer (UNDER DEVELOMPENT)',  # Important toggle that switches on/off all settings' overwrite
+                                        key=f'sid_settings_overwrite_{file_num+1}',
+                                        disabled=True)
             st.session_state['files_data'][file_num+1]['use_sid'] = sid_toggle
 
         store_rendersettings(file_num, 'render', **parameters)

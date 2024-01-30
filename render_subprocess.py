@@ -15,6 +15,8 @@ with open('temp_render_file_data.json') as file:
 
 for index, file_data in temp_json.items():
 
+    use_sid = file_data['use_sid']
+
     # Saves to .json for scripts that run in blender to take data from
     with open('render_file_data.json', 'w+', encoding='utf-8') as dict:
         json.dump(file_data['render_settings'], dict, ensure_ascii=False, indent=4)
@@ -23,7 +25,7 @@ for index, file_data in temp_json.items():
     blender = BLENDER_PATH
     #.blend file path
     blend_file = file_data['path']
-    arg_blend_file = f'-b {blend_file}'
+    arg_blend_file = f'-b "{blend_file}"'
     # Scripts pathes
     arg_scripts = file_data['scripts']
     # Scenes
@@ -31,7 +33,11 @@ for index, file_data in temp_json.items():
                                 file_data['render_settings']['render']['render_type'],
                                 file_data['render_settings']['render']['frame_range'])
 
-    console_command = f'"{blender}" {arg_blend_file} {arg_scripts} {arg_scenes}'
+    if not use_sid:
+        console_command = f'"{blender}" {arg_blend_file} {arg_scripts} {arg_scenes}'
+    else:
+        string = '--python-expr "import bpy;bpy.ops.object.superimagedenoisetemporal_bg()"'
+        console_command = f'"{blender}" {arg_blend_file} {arg_scripts}'
 
     process = subprocess.Popen(console_command,
                             #    stdout=subprocess.PIPE,

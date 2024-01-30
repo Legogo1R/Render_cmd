@@ -83,6 +83,7 @@ def draw_file_data(localization, language, file_num):
         st.session_state['files_data'][file_num+1]['render_settings']['selected_scenes'] = []  # Clear after change in file_path input
         st.session_state['files_data'][file_num+1]['scenes'] = []  # Same
         st.session_state['files_data'][file_num+1]['correct_input'] = True
+        st.session_state['files_data'][file_num+1]['use_sid'] = False
 
         scenes = get_scene_names_cached(win_file_path_input)
         col2.write(':large_green_circle:')
@@ -154,9 +155,6 @@ def draw_render_settings(localization, language, file_num):
     else:
         if 'relink_asset_libraries.py' in scripts_before:
             scripts_before.remove('relink_asset_libraries.py')
-
-    str_scripts = scripts2string(scripts_before,scripts_after,optional_scripts)
-    st.session_state['files_data'][file_num+1]['scripts'] = str_scripts
 
     # st.write(scripts_before)
     
@@ -352,20 +350,133 @@ def draw_render_settings(localization, language, file_num):
                               checkbox=False)
         
         if render_scheme == 'Frames':
-            enabled = True
+
+            # frame_range
+            kwargs = {'label':'Frame range (1,3..7,9,10)',
+                    'value':'1',
+                        'placeholder':'1,3..7,9,10',
+                        'key':f'frame_range_{file_num+1}'}
+            frame_range, toggle = render_settings_block(col_param1, col_toggle1, 'text_input', kwargs,
+                                checkbox=False)
+            parameters = {'render_type':render_scheme,
+                        'frame_range':frame_range,}
+
+            sid_toggle = False
+            st.session_state['files_data'][file_num+1]['use_sid'] = sid_toggle
+
         elif render_scheme == 'Animation':
-            enabled = False
-        # frame_range
-        kwargs = {'label':'Frame range (1,3..7,9,10)',
-                  'value':'1',
-                    'placeholder':'1,3..7,9,10',
-                    'key':f'frame_range_{file_num+1}'}
-        frame_range, toggle = render_settings_block(col_param1, col_toggle1, 'text_input', kwargs,
-                              checkbox=False, settings_toggle=enabled)
-        parameters = {'render_type':render_scheme,
-                      'frame_range':frame_range,}
+
+            parameters = {'render_type':render_scheme}
+
+            # sid_temporal_denoice
+            sid_toggle = st.toggle(label='Use SID Temporal Denoicer',  # Important toggle that switches on/off all settings' overwrite
+                                        key=f'sid_settings_overwrite_{file_num+1}')
+            st.session_state['files_data'][file_num+1]['use_sid'] = sid_toggle
+
         store_rendersettings(file_num, 'render', **parameters)
 
+        # SID Temporal Settings
+        if sid_toggle:
+        
+            render_settings_container = st.container(border=False)
+            with render_settings_container:
+                st.subheader('SID Settings')
+                
+                # 4 columns to display 2 parameters in 1 row BECAUSE F** Streamlit can't allow multipple columns inside collumns
+                col_param1, col_toggle1, col_param2, col_toggle2 = st.columns([10,1,10,1])
+
+                # quality
+                kwargs = {'label':'Quality','options':['Super', 'High', 'Standart'],
+                            'index':0,                       
+                            'key':f'quality_{file_num+1}'}
+                quality, toggle = render_settings_block(col_param1, col_toggle1, 'selectbox', kwargs,
+                                                        checkbox=False)
+                
+                # denoice file format
+                kwargs = {'label':'Denoiced format','options':['PNG', 'JPEG', 'OPEN_EXR', 'TIFF'],
+                        'index':0,
+                        'key':f'denoice_file_format_{file_num+1}'}
+                denoice_file_format, toggle = render_settings_block(col_param1, col_toggle1, 'selectbox', kwargs,
+                                                    checkbox=False)
+                
+                # overscan
+                kwargs = {'label':'Overscan, %',
+                        'value':5,
+                        'step':1,
+                        'min_value': 0,
+                        'max_value': 20,                                    
+                        'key':f'overscan_{file_num+1}'}
+                overscan, toggle = render_settings_block(col_param1, col_toggle1, 'number_input', kwargs,
+                                                         checkbox=False)
+                
+                # frame compensation
+                kwargs = {'label':'Frame compensation',
+                        'value':True,
+                        'key':f'frame_compensation_{file_num+1}'}
+                frame_compensation, toggle = render_settings_block(col_param2, col_toggle2, 'toggle', kwargs,
+                                                        checkbox=False)
+                
+                # smaller exr files
+                kwargs = {'label':'Smaller exr files',
+                        'value':True,
+                        'key':f'smaller_exr_files_{file_num+1}'}
+                smaller_exr_files, toggle = render_settings_block(col_param2, col_toggle2, 'toggle', kwargs,
+                                                        checkbox=False)
+                
+                # overwrite existing files
+                kwargs = {'label':'Overwrite existing files',
+                        'value':True,
+                        'key':f'overwrite_existing_files_{file_num+1}'}
+                overwrite_existing_files, toggle = render_settings_block(col_param2, col_toggle2, 'toggle', kwargs,
+                                                        checkbox=False)
+                
+            col_param1, col_toggle1 = st.columns([3,1])
+            # file format video
+            kwargs = {'label':'Frames to Animation format','options':['H264_in_MP4', 'Xvid', 'WebB_VP9',
+                                                  'Ogg_Theora', 'H264_in_Matroska',
+                                                  'H264_in_Matroska_for_scrubbing'],
+                    'index':0,
+                    'key':f'file_format_video_{file_num+1}'}
+            file_format_video, toggle = render_settings_block(col_param1, col_toggle1, 'selectbox', kwargs,
+                                                                checkbox_default=False)
+            parameters = {'use':toggle,
+                          'value':file_format_video,
+                          }
+            store_rendersettings(file_num, 'sid_frames_to_animation', **parameters)
+
+
+
+            output_directory = st.session_state['files_data'][file_num+1]['render_settings']['render_output_location']['value']
+            sid_working_directory = os.path.join(output_directory, f'File{file_num+1}_Temporal')
+            parameters = {'denoiser_type':'SIDT',
+                          'quality':quality,
+                          'working_directory':sid_working_directory,
+                          'overscan':overscan,
+                          'frame_compensation':frame_compensation,
+                          'smaller_exr_files':smaller_exr_files,
+                          'overwrite_existing_files':overwrite_existing_files,
+                          'denoice_file_format':denoice_file_format,
+                          }
+            
+            store_rendersettings(file_num, 'sid_settings', **parameters)
+
+
+    # Add sid_temporal_rendering.py to scripts
+    script = 'sid_temporal_rendering.py'
+    if st.session_state['files_data'][file_num+1]['use_sid']:
+        if script not in scripts_after: 
+            scripts_after.append(script)
+    else:
+        if script in scripts_after:
+            scripts_after.remove(script)
+
+    # st.write(scripts_after)
+            
+    str_scripts = scripts2string(scripts_before,scripts_after,optional_scripts)
+    st.session_state['files_data'][file_num+1]['scripts'] = str_scripts
+
+    # st.write(str_scripts)
+    # st.write(st.session_state)
 
 def render_settings_block(col_param, col_toggle, widget, kwargs,
                           checkbox_default=False, checkbox=True,
@@ -399,8 +510,8 @@ def store_rendersettings(file_num, state_param, **kwargs):
     Helperfunction for draw_render_settings()
     Stores session_state files_data rendersettings
     """
-
-    st.session_state['files_data'][file_num+1]['render_settings'][state_param]= {}
+    if state_param not in st.session_state['files_data'][file_num+1]['render_settings']:
+        st.session_state['files_data'][file_num+1]['render_settings'][state_param] = {}
     for key, value in kwargs.items():
         st.session_state['files_data'][file_num+1]['render_settings'][state_param][key] = value
 
@@ -497,9 +608,6 @@ def remove_file_container_bt_ac(file_num):
     
     if file_num in st.session_state['files_data']:
         del st.session_state['files_data'][file_num]
-
-def find_missing_files_toggle():
-    st.session_state['find_missing_files']
 
 def draw_message(event_outcome, message, message_type='WARNING'):
     """

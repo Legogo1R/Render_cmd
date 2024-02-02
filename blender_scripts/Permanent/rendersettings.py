@@ -141,7 +141,14 @@ def change_output(scene, settings):
 if __name__ == "__main__":
 
     #Use 'CUDA' or 'OPTIX' to change render scheme
-    # bpy.context.preferences.addons['cycles'].preferences.compute_device_type = render_settings['render_scheme']['value']
+    bpy.context.preferences.addons['cycles'].preferences.compute_device_type = render_settings['render_scheme']['value']
+    if render_settings['render_device']['overwrite']:
+            if render_settings['render_device']['value'] == 'GPU':
+                bpy.context.preferences.addons['cycles'].preferences.devices[0].use= True
+                bpy.context.preferences.addons['cycles'].preferences.devices[1].use= False
+            else:
+                bpy.context.preferences.addons['cycles'].preferences.devices[0].use= False
+                bpy.context.preferences.addons['cycles'].preferences.devices[1].use= True
 
     for scene in bpy.data.scenes:
         change_rendersettings(scene, render_settings)

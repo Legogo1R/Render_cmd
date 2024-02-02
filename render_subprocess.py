@@ -38,7 +38,7 @@ for index, file_data in temp_json.items():
         console_command = f'"{blender}" {arg_blend_file} {arg_scripts} {arg_scenes}'
     else:
         string = '--python-expr "import bpy;bpy.ops.object.superimagedenoisetemporal_bg()"'
-        console_command = f'"{blender}" "{arg_blend_file}" {arg_scripts}'
+        console_command = f'& "{blender}" "{arg_blend_file}" {arg_scripts}'
 
     process = subprocess.Popen(console_command,
                             #    stdout=subprocess.PIPE,

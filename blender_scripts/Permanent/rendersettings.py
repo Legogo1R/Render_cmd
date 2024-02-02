@@ -61,10 +61,10 @@ def change_rendersettings(scene, settings):
     
     #Performance
     if settings['render_scheme'] == 'OPTIX':
-        scene.cycles.use_auto_tile = False
+        scene.cycles.use_auto_tile = True
         scene.cycles.tile_size = 1536
     else:
-        scene.cycles.use_auto_tile = True
+        scene.cycles.use_auto_tile = False
         scene.cycles.tile_size = 128
     
     # scene.cycles.debug_use_spatial_splits = False

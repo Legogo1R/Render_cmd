@@ -35,7 +35,7 @@ for index, file_data in temp_json.items():
                                 file_data['render_settings']['render']['frame_range'])
 
     if not use_sid:
-        console_command = f'"{blender}" "{arg_blend_file}" {arg_scripts} {arg_scenes}'
+        console_command = f'"{blender}" {arg_blend_file} {arg_scripts} {arg_scenes}'
     else:
         string = '--python-expr "import bpy;bpy.ops.object.superimagedenoisetemporal_bg()"'
         console_command = f'"{blender}" "{arg_blend_file}" {arg_scripts}'
@@ -47,6 +47,8 @@ for index, file_data in temp_json.items():
                             )
 
     return_code = process.wait()
-    # Ensure exit
-    if return_code:
+
+    # Handle the error
+    if return_code != 0:
+        print("Returnn code of Render process is not 0")
         raise subprocess.CalledProcessError(return_code, console_command)
